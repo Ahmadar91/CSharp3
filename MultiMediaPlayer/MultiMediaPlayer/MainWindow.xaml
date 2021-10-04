@@ -1,0 +1,91 @@
+﻿<Window x:Class="MultiMediaPlayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultiMediaPlayer" xmlns:viewmodels="clr-namespace:MultiMediaPlayer.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:DirectoryStructureViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        MaxHeight="870" MaxWidth="1050"
+        MinHeight="450" MinWidth="800"
+        xmlns:views="clr-namespace:MultiMediaPlayer.Views">
+    <Grid Margin="0,0,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition  Width="20"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height=" 20"/>
+        </Grid.RowDefinitions>
+        <DockPanel  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="5">
+            <Menu DockPanel.Dock="Top" Height="23">
+                <MenuItem Header="_File" Height="20" Width="35">
+                    <MenuItem Header="_Open Invoice"/>
+                    <MenuItem Header="_Load Logo" IsEnabled="False" />
+                    <Separator />
+                    <MenuItem Header="_Print" IsEnabled="False" />
+                    <MenuItem Header="_Save As Image" IsEnabled="False" />
+                    <Separator />
+                    <MenuItem Header="_Exit" />
+                </MenuItem>
+                <MenuItem Header="_Settings" Height="20" Width="55">
+                    <MenuItem Header="_Open Invoice"  />
+                    <MenuItem Header="_Load Logo" IsEnabled="False" />
+                </MenuItem>
+                <MenuItem Header="_Help" IsEnabled=" False">
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
+
+        <views:DirectoryStructureView Grid.Column="3" Grid.Row="5" x:Name="TreeView"></views:DirectoryStructureView>
+
+        <!--<TreeView x:Name="FolderView" Grid.Column="3" Margin="10,28,468,46" Grid.Row="5" ItemsSource="{Binding Items}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.ItemTemplate>
+
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="20" Margin="3" 
+                               Source="{Binding ImageName,
+                                        Converter={x:Static local:HeaderToImageConverter.Instance}}" />
+                        <TextBlock VerticalAlignment="Center" Text="{Binding FileName}" />
+                    </StackPanel>
+
+                </HierarchicalDataTemplate>
+
+            </TreeView.ItemTemplate>
+        </TreeView>-->
+
+
+
+        <DataGrid Grid.Column="3" Grid.Row="5" Margin="301,232,87,14"/>
+        <Button Content="Up" Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,232,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Down" Grid.Column="3" HorizontalAlignment="Left" Margin="690,265,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Add" Grid.Column="3" HorizontalAlignment="Left" Margin="690,297,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Remove" Grid.Column="3" HorizontalAlignment="Left" Margin="690,328,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <!--<Image   />-->
+
+        <StackPanel Grid.Column="3"
+                    HorizontalAlignment="Left" Height="163" Margin="308,34,0,0" Grid.Row="5" VerticalAlignment="Top" Width="375">
+            <Image x:Name="Image"   VerticalAlignment="Top" Width="375" />
+            <MediaElement Source="http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg" />
+            <TextBlock Text="{Binding DisplayedImagePath}" VerticalAlignment="Top" Width="375" />
+        </StackPanel>
+        <Button x:Name="Play" Content="Play" Grid.Column="3" HorizontalAlignment="Left" Margin="456,202,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+        <Button Content="Pause" Grid.Column="3" HorizontalAlignment="Left" Margin="496,202,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
