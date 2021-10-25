@@ -5,13 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiMediaPlayer.Views" xmlns:viewmodels="clr-namespace:MultiMediaPlayer.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:DirectoryStructureViewModel}"
         mc:Ignorable="d"
-        Title="MediaFileTypes" Height="258" Width="457">
+        Title="MediaFileTypes" Height="219" Width="327">
 
-    <GroupBox Header="Image type" Margin="39,38,318,55">
-        <StackPanel x:Name="Panel1" Height="73">
-            <CheckBox x:Name="JPG" Content=".jpg" HorizontalAlignment="Left" IsEnabled="True" Margin="0,0,0,0" VerticalAlignment="Top"/>
-            <CheckBox x:Name="PNG" Content=".png" HorizontalAlignment="Left" IsEnabled="True" Margin="0,20,0,0" VerticalAlignment="Top"/>
-        </StackPanel>
-    </GroupBox>
+    <Grid Margin="0,0,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="330.348"/>
+            <ColumnDefinition Width="22.563"/>
+            <ColumnDefinition Width="81.559"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition  Width="20"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height=" 20"/>
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Column="1" Grid.Row="1" Header="Image type" Margin="39,38,214,55">
+            <StackPanel x:Name="Panel1" Height="73">
+                <CheckBox x:Name="JPG" Content=".jpg" HorizontalAlignment="Left" IsEnabled="True" Margin="0,0,0,0" VerticalAlignment="Top"/>
+                <CheckBox x:Name="PNG" Content=".png" HorizontalAlignment="Left" IsEnabled="True" Margin="0,20,0,0" VerticalAlignment="Top"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Grid.Column="1" Grid.Row="1" Header="Video type" Margin="180,38,75,55">
+            <StackPanel x:Name="Panel2" Height="73">
+                <CheckBox x:Name="MP4" Content=".Mp4" HorizontalAlignment="Left" IsEnabled="True" Margin="0,0,0,0" VerticalAlignment="Top"/>
+                <CheckBox x:Name="WAV" Content=".Wav" HorizontalAlignment="Left" IsEnabled="True" Margin="0,20,0,0" VerticalAlignment="Top"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+
+
+
 
 </Window>
