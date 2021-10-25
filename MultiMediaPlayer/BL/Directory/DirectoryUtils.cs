@@ -7,8 +7,9 @@ namespace BL.Directory
 {
 	public class DirectoryUtils
 	{
+		public DirectoryUtils() { }
 
-		public static List<DirectoryItem> GetLogicalDirves()
+		public List<DirectoryItem> GetLogicalDirves()
 		{
 			return System.IO.Directory.GetLogicalDrives().Select(x => new DirectoryItem()
 			{
@@ -44,7 +45,7 @@ namespace BL.Directory
 
 
 
-		public static List<DirectoryItem> GetDirectoryContent(string fullPath)
+		public List<DirectoryItem> GetDirectoryContent(string fullPath)
 		{
 			var items = new List<DirectoryItem>();
 

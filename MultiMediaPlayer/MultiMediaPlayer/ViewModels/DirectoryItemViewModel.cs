@@ -13,6 +13,7 @@ namespace MultiMediaPlayer.ViewModels
 	/// </summary>
 	public class DirectoryItemViewModel : BaseViewModel
 	{
+		private readonly DirectoryUtils _du;
 
 		/// <summary>
 		/// The type of this item
@@ -48,10 +49,7 @@ namespace MultiMediaPlayer.ViewModels
 		/// </summary>
 		public bool IsExpanded
 		{
-			get
-			{
-				return Children?.Count(f => f != null) > 0;
-			}
+			get => Children?.Count(f => f != null) > 0;
 			set
 			{
 				// If the UI tells us to expand...
@@ -74,8 +72,9 @@ namespace MultiMediaPlayer.ViewModels
 		/// </summary>
 		/// <param name="fullPath">The full path of this item</param>
 		/// <param name="type">The type of item</param>
-		public DirectoryItemViewModel(string fullPath, DirectoryItemType type)
+		public DirectoryItemViewModel(string fullPath, DirectoryItemType type, DirectoryUtils du)
 		{
+			_du = du;
 			// Create commands
 			ExpandCommand = new RelayCommand(Expand);
 
@@ -108,13 +107,9 @@ namespace MultiMediaPlayer.ViewModels
 				return;
 
 			// Find all children
-			var children = DirectoryUtils.GetDirectoryContent(FullPath);
+			var children = _du.GetDirectoryContent(FullPath);
 			Children = new ObservableCollection<DirectoryItemViewModel>(
-								children.Select(content => new DirectoryItemViewModel(content.FullPath, content.Type)));
-		}
-		private void SelectedNode()
-		{
-			var test = this;
+								children.Select(content => new DirectoryItemViewModel(content.FullPath, content.Type, _du)));
 		}
 	}
 }

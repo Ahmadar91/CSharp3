@@ -38,7 +38,7 @@
                     <MenuItem Header="_Exit" />
                 </MenuItem>
                 <MenuItem Header="_Settings" Height="20" Width="55">
-                    <MenuItem Header="_Open Invoice"  />
+                    <MenuItem Header="_open File type settings"  Command="{Binding OpenOptionsButton}"  />
                     <MenuItem Header="_Load Logo" IsEnabled="False" />
                 </MenuItem>
                 <MenuItem Header="_Help" IsEnabled=" False">
