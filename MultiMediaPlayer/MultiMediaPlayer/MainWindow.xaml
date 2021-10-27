@@ -72,11 +72,18 @@
 
 
 
-        <DataGrid Grid.Column="3" Grid.Row="5" Margin="301,232,87,14"/>
-        <Button Content="Up" Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,232,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Down" Grid.Column="3" HorizontalAlignment="Left" Margin="690,265,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Add" Grid.Column="3" HorizontalAlignment="Left" Margin="690,297,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Remove" Grid.Column="3" HorizontalAlignment="Left" Margin="690,328,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="301,232,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="FileName" IsReadOnly="True" Binding="{Binding Path=FileName}" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Header="FullPath" IsReadOnly="True"  Binding="{Binding Path=FullPath}" Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Account" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Header="Account" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="130"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Content="Up" Command="{Binding AddButtonCommand}"  Grid.Column="3" HorizontalAlignment="Left" Margin="690,232,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Down"  Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,265,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Add" Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,297,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Remove" Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,328,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
         <!--<Image   />-->
 
         <StackPanel Grid.Column="3"

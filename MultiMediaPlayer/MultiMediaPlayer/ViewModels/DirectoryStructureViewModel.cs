@@ -16,8 +16,8 @@ namespace MultiMediaPlayer.ViewModels
 	public class DirectoryStructureViewModel : BaseViewModel
 	{
 		private readonly MainWindow _mainWindow;
-		public List<CheckListClass> AvailablePresentationObjects { get; set; }
 		public ObservableCollection<DirectoryItemViewModel> Items { get; set; }
+		public ObservableCollection<DirectoryItemViewModel> PlayList { get; set; }
 		public bool? PNG { get; set; }
 		public bool? JPG { get; set; }
 		public MediaFileTypes MediaFileTypes { get; set; }
@@ -28,10 +28,10 @@ namespace MultiMediaPlayer.ViewModels
 			var du = new DirectoryUtils();
 
 
-			AddButtonCommand = new ViewUtils.RelayCommand(o => MainButtonClick());
+			AddButtonCommand = new ViewUtils.RelayCommand(o => AddButtonClick());
 			GetImageCommand = new ViewUtils.RelayCommand(o => GetImage());
 			OpenOptionsButton = new ViewUtils.RelayCommand(o => OpenOptions());
-
+			PlayList = new ObservableCollection<DirectoryItemViewModel>();
 
 			_mainWindow = mainWindow;
 			Items = new ObservableCollection<DirectoryItemViewModel>(du.GetLogicalDirves()
@@ -48,12 +48,12 @@ namespace MultiMediaPlayer.ViewModels
 		public ICommand GetImageCommand { get; set; }
 
 		public string FullPath { get; set; }
-		private void MainButtonClick()
+		private void AddButtonClick()
 		{
 
 			var test = _mainWindow.TreeView.FolderView.SelectedValue as DirectoryItemViewModel;
-			var test1 = test.FullPath;
-
+			var test1 = test?.FullPath;
+			PlayList.Add(test);
 			if (test.Type.Equals(DirectoryItemType.File))
 			{
 				if ((bool)MediaFileTypes.JPG.IsChecked)
@@ -102,11 +102,5 @@ namespace MultiMediaPlayer.ViewModels
 
 		}
 
-		public class CheckListClass
-		{
-			public string Name { get; set; }
-			public bool IsChecked { get; set; }
-
-		}
 	}
 }
