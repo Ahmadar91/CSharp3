@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BL.Directory;
+using BL.Models;
+using MultiMediaPlayer.Views;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using BL.Directory;
-using BL.Models;
-using MultiMediaPlayer.Views;
 using Utilities.Common;
-using MultiMediaPlayer.ViewUtils;
 
 namespace MultiMediaPlayer.ViewModels
 {
@@ -21,16 +19,22 @@ namespace MultiMediaPlayer.ViewModels
 		public bool? PNG { get; set; }
 		public bool? JPG { get; set; }
 		public MediaFileTypes MediaFileTypes { get; set; }
+		public int Index { get; set; }
 
 		public DirectoryStructureViewModel(MainWindow mainWindow)
 		{
 			MediaFileTypes = new MediaFileTypes();
+			MediaFileTypes.JPG.IsChecked = false;
+			MediaFileTypes.PNG.IsChecked = false;
+			MediaFileTypes.MP4.IsChecked = false;
+			MediaFileTypes.WAV.IsChecked = false;
 			var du = new DirectoryUtils();
 
 
 			AddButtonCommand = new ViewUtils.RelayCommand(o => AddButtonClick());
 			GetImageCommand = new ViewUtils.RelayCommand(o => GetImage());
 			OpenOptionsButton = new ViewUtils.RelayCommand(o => OpenOptions());
+			PlayButtonCommand = new ViewUtils.RelayCommand(o => PlayButtonClick());
 			PlayList = new ObservableCollection<DirectoryItemViewModel>();
 
 			_mainWindow = mainWindow;
@@ -50,26 +54,31 @@ namespace MultiMediaPlayer.ViewModels
 		public string FullPath { get; set; }
 		private void AddButtonClick()
 		{
-
 			var test = _mainWindow.TreeView.FolderView.SelectedValue as DirectoryItemViewModel;
-			var test1 = test?.FullPath;
-			PlayList.Add(test);
 			if (test.Type.Equals(DirectoryItemType.File))
 			{
-				if ((bool)MediaFileTypes.JPG.IsChecked)
+				if (MediaFileTypes.JPG.IsChecked.Value && test.FullPath.ToLowerInvariant().EndsWith(".jpg"))
 				{
-					_mainWindow.Image.Source =
-						new BitmapImage(new Uri(test1, UriKind.RelativeOrAbsolute));
-					//var test55 = GetImage(test1);
+					PlayList.Add(test);
 
-					FullPath = test1;
-					_mainWindow.Image.Source =
-						new BitmapImage(new Uri(FullPath, UriKind.RelativeOrAbsolute));
-					MessageBox.Show(test1.ToString());
 				}
-
 			}
 		}
+		private void PlayButtonClick()
+		{
+			foreach (var item in PlayList)
+			{
+				if (item.FullPath.EndsWith(".jpg"))
+				{
+					FullPath = item.FullPath;
+				}
+		
+				//_mainWindow.Image.Source =
+				//	new BitmapImage(new Uri(FullPath, UriKind.RelativeOrAbsolute));
+				//MessageBox.Show(item.FullPath.ToString());
+			}
+		}
+
 
 		public BitmapImage DisplayedImage
 		{
