@@ -5,16 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiMediaPlayer" xmlns:viewmodels="clr-namespace:MultiMediaPlayer.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:DirectoryStructureViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        MaxHeight="870" MaxWidth="1050"
-        MinHeight="450" MinWidth="800"
+        Title="MainWindow" Height="657" Width="1322"
+        MaxHeight="1200" MaxWidth="1200"
+        MinHeight="800" MinWidth="800"
         xmlns:views="clr-namespace:MultiMediaPlayer.Views">
     <Grid Margin="0,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="63*" />
+            <ColumnDefinition Width="13*"/>
             <ColumnDefinition  Width="20"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -26,7 +27,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height=" 20"/>
         </Grid.RowDefinitions>
-        <DockPanel  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="5">
+        <DockPanel  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="6">
             <Menu DockPanel.Dock="Top" Height="23">
                 <MenuItem Header="_File" Height="20" Width="35">
                     <MenuItem Header="_Open Invoice"/>
@@ -47,7 +48,7 @@
         </DockPanel>
 
 
-        <views:DirectoryStructureView Grid.Column="3" Grid.Row="5" x:Name="TreeView"></views:DirectoryStructureView>
+        <views:DirectoryStructureView Grid.Column="3" Grid.Row="5" x:Name="TreeView" Margin="26,18,112,0" />
 
         <!--<TreeView x:Name="FolderView" Grid.Column="3" Margin="10,28,468,46" Grid.Row="5" ItemsSource="{Binding Items}">
             <TreeView.ItemContainerStyle>
@@ -72,7 +73,7 @@
 
 
 
-        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="301,232,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True">
+        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="528,532,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="FileName" IsReadOnly="True" Binding="{Binding Path=FileName}" Width="50"></DataGridTextColumn>
                 <DataGridTextColumn Header="FullPath" IsReadOnly="True"  Binding="{Binding Path=FullPath}" Width="130"></DataGridTextColumn>
@@ -80,19 +81,19 @@
                 <DataGridTextColumn Header="Account" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="130"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Up" Command="{Binding AddButtonCommand}"  Grid.Column="3" HorizontalAlignment="Left" Margin="690,232,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Down"  Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,265,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Add" Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,297,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Remove" Command="{Binding AddButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="690,328,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Up" Command="{Binding AddButtonCommand}"  Grid.Column="4" HorizontalAlignment="Left" Margin="124,540,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Down"  Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,573,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Add" Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,605,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Remove" Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,636,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
         <!--<Image   />-->
 
         <StackPanel Grid.Column="3"
-                    HorizontalAlignment="Left" Height="163" Margin="308,34,0,0" Grid.Row="5" VerticalAlignment="Top" Width="375">
-            <Image x:Name="Image"  Source="{Binding FullPath}" VerticalAlignment="Top" Width="375" />
-            <MediaElement Source="http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg" />
+                    HorizontalAlignment="Left" Height="378" Margin="491,44,0,0" Grid.Row="5" VerticalAlignment="Top" Width="634" Grid.ColumnSpan="2">
+            <Image x:Name="Image"  Source="{Binding FullPath}" Width="632" Height="376" />
+            <MediaElement x:Name="Video" Source="{Binding VideoFullPath}" />
             <TextBlock Text="{Binding DisplayedImagePath}" VerticalAlignment="Top" Width="375" />
         </StackPanel>
-        <Button x:Name="Play" Content="Play"  Command="{Binding PlayButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="456,202,0,0" Grid.Row="5" VerticalAlignment="Top"/>
-        <Button Content="Pause" Grid.Column="3" HorizontalAlignment="Left" Margin="496,202,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+        <Button x:Name="Play" Content="Play"  Command="{Binding PlayButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="775,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+        <Button Content="Pause" Grid.Column="3" HorizontalAlignment="Left" Margin="815,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
     </Grid>
 </Window>

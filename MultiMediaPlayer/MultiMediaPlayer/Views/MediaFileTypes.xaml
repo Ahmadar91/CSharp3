@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiMediaPlayer.Views" xmlns:viewmodels="clr-namespace:MultiMediaPlayer.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:DirectoryStructureViewModel}"
         mc:Ignorable="d"
-        Title="MediaFileTypes" Height="219" Width="327">
+        Title="MediaFileTypes" Height="219" Width="327" Closed="Window_Closed" Closing="Window_Closing_1">
 
     <Grid Margin="0,0,0,0">
         <Grid.ColumnDefinitions>
