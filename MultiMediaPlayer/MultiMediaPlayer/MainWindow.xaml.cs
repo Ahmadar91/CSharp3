@@ -25,9 +25,7 @@ namespace MultiMediaPlayer
 	/// </summary>
 	public partial class MainWindow
 	{
-
-
-		/// <summary>
+        /// <summary>
 		/// Default constructor
 		/// </summary>
 		public MainWindow()
@@ -35,11 +33,7 @@ namespace MultiMediaPlayer
 
 			InitializeComponent();
 			DataContext = new DirectoryStructureViewModel(this);
-			TreeView.DataContext = new DirectoryStructureViewModel(this);
-
-
-			//DataContext = new DirectoryStructureViewModel();
-		}
-
-	}
+			TreeView.DataContext = DataContext;
+        }
+    }
 }

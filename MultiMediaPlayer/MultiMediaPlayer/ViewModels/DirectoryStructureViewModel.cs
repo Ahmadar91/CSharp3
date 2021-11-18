@@ -4,9 +4,7 @@ using MultiMediaPlayer.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,146 +15,212 @@ using Utilities.Common;
 
 namespace MultiMediaPlayer.ViewModels
 {
-	public class DirectoryStructureViewModel : BaseViewModel
-	{
-		private readonly MainWindow _mainWindow;
-		public ObservableCollection<DirectoryItemViewModel> Items { get; set; }
-		public ObservableCollection<DirectoryItemViewModel> PlayList { get; set; }
+    public class DirectoryStructureViewModel : BaseViewModel
+    {
+        private readonly MainWindow _mainWindow;
+        public ObservableCollection<DirectoryItemViewModel> Items { get; set; }
+        public ObservableCollection<DirectoryItemViewModel> PlayList { get; set; }
         public MediaFileTypes MediaFileTypes { get; set; }
-		public int Index { get; set; }
         private List<BitmapImage> Images = new List<BitmapImage>();
-        private DispatcherTimer PictureTimer = new DispatcherTimer();
-        DispatcherTimer VideoTimer = new DispatcherTimer();
- 
-        private int ImageNumber = 0;
+        private DispatcherTimer _timer = new DispatcherTimer();
+        //private DispatcherTimer VideoTimer = new DispatcherTimer();
+
+        private int _imageNumber = 0;
 
         public DirectoryStructureViewModel(MainWindow mainWindow)
-		{
-			MediaFileTypes = new MediaFileTypes();
-			MediaFileTypes.JPG.IsChecked = false;
-			MediaFileTypes.PNG.IsChecked = false;
-			MediaFileTypes.MP4.IsChecked = false;
-			MediaFileTypes.WAV.IsChecked = false;
-			var du = new DirectoryUtils();
+        {
+            MediaFileTypes = new MediaFileTypes
+            {
+                JPG =
+                {
+                    IsChecked = false
+                },
+                PNG =
+                {
+                    IsChecked = false
+                },
+                MP4 =
+                {
+                    IsChecked = false
+                },
+                WAV =
+                {
+                    IsChecked = false
+                }
+            };
+            var du = new DirectoryUtils();
 
 
-			AddButtonCommand = new ViewUtils.RelayCommand(o => AddButtonClick());
-			GetImageCommand = new ViewUtils.RelayCommand(o => GetImage());
-			OpenOptionsButton = new ViewUtils.RelayCommand(o => OpenOptions());
-			PlayButtonCommand = new ViewUtils.RelayCommand(o => PlayButtonClick());
-			PlayList = new ObservableCollection<DirectoryItemViewModel>();
+            AddButtonCommand = new ViewUtils.RelayCommand(o => AddButtonClick());
+            OpenOptionsButton = new ViewUtils.RelayCommand(o => OpenOptions());
+            PlayButtonCommand = new ViewUtils.RelayCommand(o => PlayButtonClick());
+            DeleteButtonCommand = new ViewUtils.RelayCommand(o => DeleteButtonClick());
+            MoveUpCommand = new ViewUtils.RelayCommand(o => MoveUpButtonClick());
+            MoveDownCommand = new ViewUtils.RelayCommand(o => MoveDownButtonClick());
+            PauseButtonCommand = new ViewUtils.RelayCommand(o => PauseButtonClick());
 
-			_mainWindow = mainWindow;
-			Items = new ObservableCollection<DirectoryItemViewModel>(du.GetLogicalDirves()
-				.Select(drive => new DirectoryItemViewModel(drive.FullPath, DirectoryItemType.Drive, du)));
-		}
+            PlayList = new ObservableCollection<DirectoryItemViewModel>();
+            _mainWindow = mainWindow;
+            Items = new ObservableCollection<DirectoryItemViewModel>(du.GetLogicalDirves()
+                .Select(drive => new DirectoryItemViewModel(drive.FullPath, DirectoryItemType.Drive, du)));
+            _mainWindow.TreeView.MouseDoubleClick += TreeView_MouseDoubleClick;
+        }
 
-		public ICommand AddButtonCommand { get; set; }
-		public ICommand OpenOptionsButton { get; set; }
-		public ICommand DeleteButtonCommand { get; set; }
-		public ICommand MoveUpCommand { get; set; }
-		public ICommand MoveDownCommand { get; set; }
-		public ICommand PlayButtonCommand { get; set; }
-		public ICommand PauseButtonCommand { get; set; }
-		public ICommand GetImageCommand { get; set; }
+        private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+           AddButtonClick();
+        }
 
-		public string FullPath { get; set; }
-		public string VideoFullPath { get; set; }
-		private void AddButtonClick()
-		{
+        public ICommand AddButtonCommand { get; set; }
+        public ICommand OpenOptionsButton { get; set; }
+        public ICommand DeleteButtonCommand { get; set; }
+        public ICommand MoveUpCommand { get; set; }
+        public ICommand MoveDownCommand { get; set; }
+        public ICommand PlayButtonCommand { get; set; }
+        public ICommand PauseButtonCommand { get; set; }
+        private void AddButtonClick()
+        {
             try
             {
-                var test = _mainWindow.TreeView.FolderView.SelectedValue as DirectoryItemViewModel;
-                if (test.Type.Equals(DirectoryItemType.File))
+                var selectedItem = _mainWindow.TreeView.FolderView.SelectedValue as DirectoryItemViewModel;
+                if (selectedItem != null && selectedItem.Type.Equals(DirectoryItemType.File))
                 {
-                    if (MediaFileTypes.JPG.IsChecked.Value && test.FullPath.ToLowerInvariant().EndsWith(".jpg")
-                        || MediaFileTypes.PNG.IsChecked.Value && test.FullPath.ToLowerInvariant().EndsWith(".png")
-                       )
+                    if (MediaFileTypes.PNG.IsChecked != null && MediaFileTypes.JPG.IsChecked != null && (MediaFileTypes.JPG.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".jpg")
+                            || MediaFileTypes.PNG.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".png")))
                     {
-                        PlayList.Add(test);
-                        ImageNumber++;
+                        PlayList.Add(selectedItem);
                     }
-
-                    if ( MediaFileTypes.MP4.IsChecked.Value && test.FullPath.ToLowerInvariant().EndsWith(".mp4")
-                        || MediaFileTypes.WAV.IsChecked.Value && test.FullPath.ToLowerInvariant().EndsWith(".wav"))
+                    else if (MediaFileTypes.WAV.IsChecked != null && MediaFileTypes.MP4.IsChecked != null && (MediaFileTypes.MP4.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".mp4")
+                                 || MediaFileTypes.WAV.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".wav")))
                     {
-                        PlayList.Add(test);
+                        PlayList.Add(selectedItem);
                     }
-                    MessageBox.Show($"please choose the media types from the settings");
+                    else
+                        MessageBox.Show($"please choose the media types from the settings");
 
-				}
-			}
+                }
+            }
             catch (Exception e)
             {
                 MessageBox.Show($"Error {e.Message}");
             }
-			
-		}
-		private void PlayButtonClick()
-		{
-			foreach (var item in PlayList)
-            {
-                FullPath = "";
 
-				if (item.FullPath.EndsWith(".jpg", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith(".png", StringComparison.CurrentCultureIgnoreCase))
+        }
+        private void DeleteButtonClick()
+        {
+            try
+            {
+                var selectedItem = _mainWindow.Grid.SelectedIndex;
+                if (selectedItem > 0)
                 {
-                    //FullPath = item.FullPath;
+                    PlayList.RemoveAt(selectedItem);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error {e.Message}");
+            }
+
+        }
+        private void PauseButtonClick()
+        {
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error {e.Message}");
+            }
+
+        }
+        private void MoveUpButtonClick()
+        {
+            try
+            {
+                var selectedIndex = _mainWindow.Grid.SelectedIndex;
+                if (selectedIndex > 0)
+                {
+                    var itemToMoveUp = PlayList[selectedIndex];
+                    PlayList.RemoveAt(selectedIndex);
+                    PlayList.Insert(selectedIndex - 1, itemToMoveUp);
+                    _mainWindow.Grid.SelectedIndex = selectedIndex - 1;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error {e.Message}");
+            }
+
+        }
+        private void MoveDownButtonClick()
+        {
+            try
+            {
+                var selectedIndex = _mainWindow.Grid.SelectedIndex;
+                if (selectedIndex + 1 < PlayList.Count)
+                {
+                    var itemToMoveDown = PlayList[selectedIndex];
+                    PlayList.RemoveAt(selectedIndex);
+                    PlayList.Insert(selectedIndex + 1, itemToMoveDown);
+                    _mainWindow.Grid.SelectedIndex = selectedIndex + 1;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error {e.Message}");
+            }
+
+        }
+        private void PlayButtonClick()
+        {
+            if (PlayList.Count <= 0)
+            {
+                MessageBox.Show(" playlist is empty please insert Items in to the playlist");
+            }
+            foreach (var item in PlayList)
+            {
+                if (item.FullPath.EndsWith(".jpg", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith(".png", StringComparison.CurrentCultureIgnoreCase))
+                {
                     Images.Add(new BitmapImage(new Uri(item.FullPath)));
-					//Task.Delay(3000).Wait();
-				}
+                }
 
                 if (item.FullPath.EndsWith(".mp4", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith(".wav", StringComparison.CurrentCultureIgnoreCase))
                 {
                     _mainWindow.Video.Source = new Uri(item.FullPath, UriKind.RelativeOrAbsolute);
                 }
-				// else
-				//FullPath = "";
 
-
-
-				//foreach (FileInfo file_info in dir_info.GetFiles())
-    //            {
-    //                if ((file_info.Extension.ToLower() == ".jpg") ||
-    //                    (file_info.Extension.ToLower() == ".png"))
-    //                {
-                       
-    //                }
-    //            }
-
-                // Display the first image.
-                //imgPicture.Source = Images[0];
-
-                if (Images.Count > 0)
-                {
-                    _mainWindow.Image.Source = Images[0];
-                    // Install a timer to show each image.
-                    PictureTimer.Interval = TimeSpan.FromSeconds(3);
-                    PictureTimer.Tick += Tick;
-                    PictureTimer.Start();
-
-                }
-                VideoTimer.Interval = TimeSpan.FromSeconds(1);
-                VideoTimer.Tick += timer_Tick;
-                VideoTimer.Start();
-
-
-
-
-                //_mainWindow.Image.Source =
-                //	new BitmapImage(new Uri(FullPath, UriKind.RelativeOrAbsolute));
-                //MessageBox.Show(item.FullPath.ToString());
             }
+            if (Images.Count > 0)
+            {
+                _mainWindow.Image.Source = Images[0];
+                // Install a timer to show each image.
 
-		}
+                //PictureTimer.Interval = TimeSpan.FromSeconds(3);
+                //PictureTimer.Tick += Tick;
+                //PictureTimer.Start();
+
+            }
+            // Install a timer to show each image.
+
+            _timer.Interval = TimeSpan.FromSeconds(3);
+            _timer.Tick += Tick;
+            _timer.Start();
+            //VideoTimer.Interval = TimeSpan.FromSeconds(1);
+            //VideoTimer.Tick += timer_Tick;
+            //VideoTimer.Start();
+
+
+        }
         void timer_Tick(object sender, EventArgs e)
         {
             if (_mainWindow.Video.Source != null)
             {
-           //     if (_mainWindow.Video.NaturalDuration.HasTimeSpan)
-                    //lblStatus.Content = String.Format("{0} / {1}", _mainWindow.Video.Position.ToString(@"mm\:ss"), _mainWindow.Video.NaturalDuration.TimeSpan.ToString(@"mm\:ss"));
+                //   if (_mainWindow.Video.NaturalDuration.HasTimeSpan)
+                //lblStatus.Content = String.Format("{0} / {1}", _mainWindow.Video.Position.ToString(@"mm\:ss"), _mainWindow.Video.NaturalDuration.TimeSpan.ToString(@"mm\:ss"));
             }
             //else
-                //lblStatus.Content = "No file selected...";
+            //lblStatus.Content = "No file selected...";
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
@@ -178,8 +242,18 @@ namespace MultiMediaPlayer.ViewModels
 
         private void Tick(object sender, System.EventArgs e)
         {
-            ImageNumber = (ImageNumber + 1) % Images.Count;
-            ShowNextImage(_mainWindow.Image);
+            _imageNumber = (_imageNumber + 1);
+
+            if (!_imageNumber.Equals(Images.Count))
+            {
+                ShowNextImage(_mainWindow.Image);
+            }
+            else
+            {
+                _timer.IsEnabled = false;
+            }
+        
+         
         }
         private void ShowNextImage(Image img)
         {
@@ -213,7 +287,7 @@ namespace MultiMediaPlayer.ViewModels
             // Add a key frame to the animation.
             // It should be at time 0 after the animation begins.
             DiscreteObjectKeyFrame new_image_frame =
-                new DiscreteObjectKeyFrame(Images[ImageNumber], TimeSpan.Zero);
+                new DiscreteObjectKeyFrame(Images[_imageNumber], TimeSpan.Zero);
             new_image_animation.KeyFrames.Add(new_image_frame);
 
             // Use the Storyboard to set the target property.
@@ -244,36 +318,11 @@ namespace MultiMediaPlayer.ViewModels
             // Start the storyboard on the img control.
             sb.Begin(img);
         }
-        public BitmapImage DisplayedImage
-		{
-			get;
-			set;
-		}
 
-		private void OpenOptions()
-		{
+        private void OpenOptions()
+        {
             MediaFileTypes.Show();
-		}
+        }
 
-
-
-		private void GetImage()
-		{
-			//MessageBox.Show("here-+");
-			//DisplayedImage = new BitmapImage();
-			//if (!string.IsNullOrEmpty(path))
-			//{
-			//	DisplayedImage.BeginInit();
-			//	DisplayedImage.CacheOption = BitmapCacheOption.OnLoad;
-			//	DisplayedImage.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-			//	DisplayedImage.UriSource = new Uri(path);
-			//	DisplayedImage.DecodePixelWidth = 200;
-			//	DisplayedImage.EndInit();
-			//}
-			//return DisplayedImage;
-
-
-		}
-
-	}
+    }
 }

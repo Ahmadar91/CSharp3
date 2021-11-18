@@ -29,17 +29,15 @@
         </Grid.RowDefinitions>
         <DockPanel  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="6">
             <Menu DockPanel.Dock="Top" Height="23">
-                <MenuItem Header="_File" Height="20" Width="35">
-                    <MenuItem Header="_Open Invoice"/>
-                    <MenuItem Header="_Load Logo" IsEnabled="False" />
+                <MenuItem Header="_File" Height="20" Width="35" IsEnabled=" False">
+                    <MenuItem Header="_Open File"/>
                     <Separator />
-                    <MenuItem Header="_Print" IsEnabled="False" />
-                    <MenuItem Header="_Save As Image" IsEnabled="False" />
+                    <MenuItem Header="_Save" IsEnabled="False" />
                     <Separator />
                     <MenuItem Header="_Exit" />
                 </MenuItem>
                 <MenuItem Header="_Settings" Height="20" Width="55">
-                    <MenuItem Header="_open File type settings"  Command="{Binding OpenOptionsButton}"  />
+                    <MenuItem Header="_Open File type settings"  Command="{Binding OpenOptionsButton}"  />
                     <MenuItem Header="_Load Logo" IsEnabled="False" />
                 </MenuItem>
                 <MenuItem Header="_Help" IsEnabled=" False">
@@ -50,42 +48,18 @@
 
         <views:DirectoryStructureView Grid.Column="3" Grid.Row="5" x:Name="TreeView" Margin="26,18,112,0" />
 
-        <!--<TreeView x:Name="FolderView" Grid.Column="3" Margin="10,28,468,46" Grid.Row="5" ItemsSource="{Binding Items}">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.ItemTemplate>
-
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Width="20" Margin="3" 
-                               Source="{Binding ImageName,
-                                        Converter={x:Static local:HeaderToImageConverter.Instance}}" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding FileName}" />
-                    </StackPanel>
-
-                </HierarchicalDataTemplate>
-
-            </TreeView.ItemTemplate>
-        </TreeView>-->
-
-
-
-        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="528,532,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True" Grid.ColumnSpan="2">
+        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="447,532,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True" Grid.ColumnSpan="2">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="FileName" IsReadOnly="True" Binding="{Binding Path=FileName}" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Header="FileName" IsReadOnly="True" Binding="{Binding Path=FileName}" Width="160"></DataGridTextColumn>
                 <DataGridTextColumn Header="FullPath" IsReadOnly="True"  Binding="{Binding Path=FullPath}" Width="130"></DataGridTextColumn>
-                <DataGridTextColumn Header="Account" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Account" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Description" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="100"></DataGridTextColumn>
+                <!--<DataGridTextColumn Header="Description" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="130"></DataGridTextColumn>-->
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Up" Command="{Binding AddButtonCommand}"  Grid.Column="4" HorizontalAlignment="Left" Margin="124,540,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Down"  Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,573,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Up" Command="{Binding MoveUpCommand}"  Grid.Column="4" HorizontalAlignment="Left" Margin="124,540,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Down"  Command="{Binding MoveDownCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,573,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
         <Button Content="Add" Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,605,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <Button Content="Remove" Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,636,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
-        <!--<Image   />-->
+        <Button Content="Remove" Command="{Binding DeleteButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,636,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
 
         <StackPanel Grid.Column="3"
                     HorizontalAlignment="Left" Height="378" Margin="491,44,0,0" Grid.Row="5" VerticalAlignment="Top" Width="634" Grid.ColumnSpan="2">
@@ -94,6 +68,6 @@
             <TextBlock Text="{Binding DisplayedImagePath}" VerticalAlignment="Top" Width="375" />
         </StackPanel>
         <Button x:Name="Play" Content="Play"  Command="{Binding PlayButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="775,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
-        <Button Content="Pause" Grid.Column="3" HorizontalAlignment="Left" Margin="815,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+        <Button Content="Pause" Grid.Column="3"  Command="{Binding PauseButtonCommand}" HorizontalAlignment="Left" Margin="815,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
     </Grid>
 </Window>

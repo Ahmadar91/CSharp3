@@ -24,5 +24,5 @@ namespace MultiMediaPlayer.Views
 		{
 			InitializeComponent();
 		}
-	}
+    }
 }

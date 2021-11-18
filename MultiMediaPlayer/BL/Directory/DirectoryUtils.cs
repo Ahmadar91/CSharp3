@@ -65,6 +65,7 @@ namespace BL.Directory
 			}
 			catch (Exception e)
 			{
+                throw new Exception($"IO Exception: {e.Message}");
 
 			}
 
@@ -82,11 +83,10 @@ namespace BL.Directory
 					}));
 			}
 			catch (Exception e)
-			{
-
-			}
-
-			return items;
+            {
+                throw new Exception($"IO Exception: {e.Message}");
+            }
+            return items;
 		}
 	}
 }
