@@ -10,7 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TreeView x:Name="FolderView" Margin="10,28,468,46" ItemsSource="{Binding Items}">
+        <TreeView x:Name="FolderView" ItemsSource="{Binding Items}" Margin="25,28,548,28">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>

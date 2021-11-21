@@ -61,12 +61,12 @@
         <Button Content="Add" Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,605,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
         <Button Content="Remove" Command="{Binding DeleteButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,636,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
 
-        <StackPanel Grid.Column="3"
-                    HorizontalAlignment="Left" Height="378" Margin="491,44,0,0" Grid.Row="5" VerticalAlignment="Top" Width="634" Grid.ColumnSpan="2">
-            <Image x:Name="Image"  Source="{Binding FullPath}" Width="632" Height="376" />
-            <MediaElement x:Name="Video" Source="{Binding VideoFullPath}" />
-            <TextBlock Text="{Binding DisplayedImagePath}" VerticalAlignment="Top" Width="375" />
-        </StackPanel>
+        <!--<StackPanel Grid.Column="3"
+                    HorizontalAlignment="Left" Height="372" Margin="341,44,0,0" Grid.Row="5" VerticalAlignment="Top" Width="784" Grid.ColumnSpan="2">-->
+        <Image x:Name="Image"   Grid.Column="3" Grid.ColumnSpan="2" Margin="370,59,37,328" Grid.Row="5" />
+        <MediaElement x:Name="Video"  Grid.Column="3" Grid.ColumnSpan="2" Margin="370,59,37,328" Grid.Row="5"/>
+        <Label x:Name="label" Width="376" Grid.Column="3" Margin="627,451,157,273" Grid.Row="5" Grid.ColumnSpan="2" />
+        <!--</StackPanel>-->
         <Button x:Name="Play" Content="Play"  Command="{Binding PlayButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="775,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
         <Button Content="Pause" Grid.Column="3"  Command="{Binding PauseButtonCommand}" HorizontalAlignment="Left" Margin="815,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
     </Grid>

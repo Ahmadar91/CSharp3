@@ -23,9 +23,10 @@ namespace MultiMediaPlayer.ViewModels
         public MediaFileTypes MediaFileTypes { get; set; }
         private List<BitmapImage> Images = new List<BitmapImage>();
         private DispatcherTimer _timer = new DispatcherTimer();
-        //private DispatcherTimer VideoTimer = new DispatcherTimer();
+        private DispatcherTimer VideoTimer = new DispatcherTimer();
 
         private int _imageNumber = 0;
+        private int _VideoNumber = 0;
 
         public DirectoryStructureViewModel(MainWindow mainWindow)
         {
@@ -33,19 +34,19 @@ namespace MultiMediaPlayer.ViewModels
             {
                 JPG =
                 {
-                    IsChecked = false
+                    IsChecked = true
                 },
                 PNG =
                 {
-                    IsChecked = false
+                    IsChecked = true
                 },
                 MP4 =
                 {
-                    IsChecked = false
+                    IsChecked = true
                 },
                 WAV =
                 {
-                    IsChecked = false
+                    IsChecked = true
                 }
             };
             var du = new DirectoryUtils();
@@ -68,7 +69,7 @@ namespace MultiMediaPlayer.ViewModels
 
         private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-           AddButtonClick();
+            AddButtonClick();
         }
 
         public ICommand AddButtonCommand { get; set; }
@@ -178,49 +179,137 @@ namespace MultiMediaPlayer.ViewModels
             {
                 MessageBox.Show(" playlist is empty please insert Items in to the playlist");
             }
-            foreach (var item in PlayList)
-            {
-                if (item.FullPath.EndsWith(".jpg", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith(".png", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    Images.Add(new BitmapImage(new Uri(item.FullPath)));
-                }
 
-                if (item.FullPath.EndsWith(".mp4", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith(".wav", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    _mainWindow.Video.Source = new Uri(item.FullPath, UriKind.RelativeOrAbsolute);
-                }
+            var firstItem = PlayList[0].FullPath;
+            if (firstItem.EndsWith(".jpg", StringComparison.CurrentCultureIgnoreCase) || firstItem.EndsWith(".png", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _mainWindow.Image.Source = new BitmapImage(new Uri(PlayList[0].FullPath));
 
             }
-            if (Images.Count > 0)
+            if (firstItem.EndsWith(".mp4", StringComparison.CurrentCultureIgnoreCase) || firstItem.EndsWith(".wav", StringComparison.CurrentCultureIgnoreCase))
             {
-                _mainWindow.Image.Source = Images[0];
-                // Install a timer to show each image.
-
-                //PictureTimer.Interval = TimeSpan.FromSeconds(3);
-                //PictureTimer.Tick += Tick;
-                //PictureTimer.Start();
-
+                _mainWindow.Video.Source = new Uri(PlayList[0].FullPath, UriKind.RelativeOrAbsolute);
             }
+
             // Install a timer to show each image.
 
             _timer.Interval = TimeSpan.FromSeconds(3);
             _timer.Tick += Tick;
             _timer.Start();
-            //VideoTimer.Interval = TimeSpan.FromSeconds(1);
-            //VideoTimer.Tick += timer_Tick;
-            //VideoTimer.Start();
+
 
 
         }
-        void timer_Tick(object sender, EventArgs e)
+
+        private void Tick(object sender, System.EventArgs e)
         {
-            if (_mainWindow.Video.Source != null)
+            _imageNumber = (_imageNumber + 1);
+
+            if (!(_imageNumber).Equals(PlayList.Count))
             {
-                //   if (_mainWindow.Video.NaturalDuration.HasTimeSpan)
-                //lblStatus.Content = String.Format("{0} / {1}", _mainWindow.Video.Position.ToString(@"mm\:ss"), _mainWindow.Video.NaturalDuration.TimeSpan.ToString(@"mm\:ss"));
+                _timer.IsEnabled = true;
+                ShowNextImage(_mainWindow.Image, _mainWindow.Video);
             }
-            //else
-            //lblStatus.Content = "No file selected...";
+            else
+            {
+                _timer.IsEnabled = false;
+            }
+
+
+        }
+        private void ShowNextImage(Image img, MediaElement video)
+        {
+            var item = PlayList[_imageNumber];
+            Storyboard sb = new Storyboard();
+            if (item.FullPath.EndsWith("jpg", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith("png", StringComparison.InvariantCultureIgnoreCase))
+            {
+                video.Source = null;
+                const double transition_time = 0.9;
+                // ***************************
+                // Animate Opacity 1.0 --> 0.0
+                // ***************************
+                DoubleAnimation fade_out = new DoubleAnimation(1.0, 0.0,
+                    TimeSpan.FromSeconds(transition_time));
+                fade_out.BeginTime = TimeSpan.FromSeconds(0);
+
+                // Use the Storyboard to set the target property.
+                Storyboard.SetTarget(fade_out, img);
+                Storyboard.SetTargetProperty(fade_out,
+                    new PropertyPath(Image.OpacityProperty));
+
+                // Add the animation to the StoryBoard.
+                sb.Children.Add(fade_out);
+
+
+                // *********************************
+                // Animate displaying the new image.
+                // *********************************
+                ObjectAnimationUsingKeyFrames new_image_animation =
+                    new ObjectAnimationUsingKeyFrames();
+                // Start after the first animation has finisheed.
+                new_image_animation.BeginTime = TimeSpan.FromSeconds(transition_time);
+
+                // Add a key frame to the animation.
+                // It should be at time 0 after the animation begins.
+                DiscreteObjectKeyFrame new_image_frame =
+                    new DiscreteObjectKeyFrame(new BitmapImage(new Uri(item.FullPath)), TimeSpan.Zero);
+                new_image_animation.KeyFrames.Add(new_image_frame);
+
+                // Use the Storyboard to set the target property.
+                Storyboard.SetTarget(new_image_animation, img);
+                Storyboard.SetTargetProperty(new_image_animation,
+                    new PropertyPath(Image.SourceProperty));
+
+                // Add the animation to the StoryBoard.
+                sb.Children.Add(new_image_animation);
+
+
+                // ***************************
+                // Animate Opacity 0.0 --> 1.0
+                // ***************************
+                // Start when the first animation ends.
+                DoubleAnimation fade_in = new DoubleAnimation(0.0, 1.0,
+                    TimeSpan.FromSeconds(transition_time));
+                fade_in.BeginTime = TimeSpan.FromSeconds(transition_time);
+
+                // Use the Storyboard to set the target property.
+                Storyboard.SetTarget(fade_in, img);
+                Storyboard.SetTargetProperty(fade_in,
+                    new PropertyPath(Image.OpacityProperty));
+
+                // Add the animation to the StoryBoard.
+                sb.Children.Add(fade_in);
+
+                // Start the storyboard on the img control.
+                sb.Begin(img);
+            }
+
+            if (item.FullPath.EndsWith("mp4", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith("wav", StringComparison.InvariantCultureIgnoreCase))
+            {
+                img.Source = null;
+                if (video.Source != null)
+                {
+                    while (true)
+                    {
+                        if (video.NaturalDuration.HasTimeSpan)
+                            _mainWindow.label.Content = $"{_mainWindow.Video.Position:mm\\:ss} / {_mainWindow.Video.NaturalDuration.TimeSpan:mm\\:ss}";
+                        if (video.Position.Equals(video.NaturalDuration.TimeSpan))
+                        {
+                            video.Source = new Uri(item.FullPath, UriKind.RelativeOrAbsolute);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    video.Source = new Uri(item.FullPath, UriKind.RelativeOrAbsolute);
+                }
+            }
+        }
+
+        private void OpenOptions()
+        {
+            MediaFileTypes.Show();
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
@@ -236,92 +325,6 @@ namespace MultiMediaPlayer.ViewModels
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             _mainWindow.Video.Stop();
-        }
-
-
-
-        private void Tick(object sender, System.EventArgs e)
-        {
-            _imageNumber = (_imageNumber + 1);
-
-            if (!_imageNumber.Equals(Images.Count))
-            {
-                ShowNextImage(_mainWindow.Image);
-            }
-            else
-            {
-                _timer.IsEnabled = false;
-            }
-        
-         
-        }
-        private void ShowNextImage(Image img)
-        {
-            const double transition_time = 0.9;
-            Storyboard sb = new Storyboard();
-
-            // ***************************
-            // Animate Opacity 1.0 --> 0.0
-            // ***************************
-            DoubleAnimation fade_out = new DoubleAnimation(1.0, 0.0,
-                TimeSpan.FromSeconds(transition_time));
-            fade_out.BeginTime = TimeSpan.FromSeconds(0);
-
-            // Use the Storyboard to set the target property.
-            Storyboard.SetTarget(fade_out, img);
-            Storyboard.SetTargetProperty(fade_out,
-                new PropertyPath(Image.OpacityProperty));
-
-            // Add the animation to the StoryBoard.
-            sb.Children.Add(fade_out);
-
-
-            // *********************************
-            // Animate displaying the new image.
-            // *********************************
-            ObjectAnimationUsingKeyFrames new_image_animation =
-                new ObjectAnimationUsingKeyFrames();
-            // Start after the first animation has finisheed.
-            new_image_animation.BeginTime = TimeSpan.FromSeconds(transition_time);
-
-            // Add a key frame to the animation.
-            // It should be at time 0 after the animation begins.
-            DiscreteObjectKeyFrame new_image_frame =
-                new DiscreteObjectKeyFrame(Images[_imageNumber], TimeSpan.Zero);
-            new_image_animation.KeyFrames.Add(new_image_frame);
-
-            // Use the Storyboard to set the target property.
-            Storyboard.SetTarget(new_image_animation, img);
-            Storyboard.SetTargetProperty(new_image_animation,
-                new PropertyPath(Image.SourceProperty));
-
-            // Add the animation to the StoryBoard.
-            sb.Children.Add(new_image_animation);
-
-
-            // ***************************
-            // Animate Opacity 0.0 --> 1.0
-            // ***************************
-            // Start when the first animation ends.
-            DoubleAnimation fade_in = new DoubleAnimation(0.0, 1.0,
-                TimeSpan.FromSeconds(transition_time));
-            fade_in.BeginTime = TimeSpan.FromSeconds(transition_time);
-
-            // Use the Storyboard to set the target property.
-            Storyboard.SetTarget(fade_in, img);
-            Storyboard.SetTargetProperty(fade_in,
-                new PropertyPath(Image.OpacityProperty));
-
-            // Add the animation to the StoryBoard.
-            sb.Children.Add(fade_in);
-
-            // Start the storyboard on the img control.
-            sb.Begin(img);
-        }
-
-        private void OpenOptions()
-        {
-            MediaFileTypes.Show();
         }
 
     }
