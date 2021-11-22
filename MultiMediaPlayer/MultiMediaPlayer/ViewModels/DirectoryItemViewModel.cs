@@ -1,8 +1,10 @@
-﻿using BL.Directory;
+﻿using System;
+using BL.Directory;
 using BL.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Utilities.Common;
 
 
@@ -28,6 +30,10 @@ namespace MultiMediaPlayer.ViewModels
 		/// </summary>
 		public string FullPath { get; set; }
 
+        /// <summary>
+        /// Loaded Image of the item
+        /// </summary>
+        public BitmapImage LoadedImage { get; set; }
 		/// <summary>
 		/// The name of this directory item
 		/// </summary>

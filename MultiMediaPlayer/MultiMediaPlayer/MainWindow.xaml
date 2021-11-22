@@ -48,7 +48,7 @@
 
         <views:DirectoryStructureView Grid.Column="3" Grid.Row="5" x:Name="TreeView" Margin="26,18,112,0" />
 
-        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="447,532,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True" Grid.ColumnSpan="2">
+        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="378,532,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="FileName" IsReadOnly="True" Binding="{Binding Path=FileName}" Width="160"></DataGridTextColumn>
                 <DataGridTextColumn Header="FullPath" IsReadOnly="True"  Binding="{Binding Path=FullPath}" Width="130"></DataGridTextColumn>
@@ -63,9 +63,21 @@
 
         <!--<StackPanel Grid.Column="3"
                     HorizontalAlignment="Left" Height="372" Margin="341,44,0,0" Grid.Row="5" VerticalAlignment="Top" Width="784" Grid.ColumnSpan="2">-->
-        <Image x:Name="Image"   Grid.Column="3" Grid.ColumnSpan="2" Margin="370,59,37,328" Grid.Row="5" />
-        <MediaElement x:Name="Video"  Grid.Column="3" Grid.ColumnSpan="2" Margin="370,59,37,328" Grid.Row="5"/>
-        <Label x:Name="label" Width="376" Grid.Column="3" Margin="627,451,157,273" Grid.Row="5" Grid.ColumnSpan="2" />
+        <ListView x:Name="TvBox" HorizontalAlignment="Left" Margin="378,50,0,310" Grid.Row="5" Width="698" Grid.Column="3" Grid.ColumnSpan="2" ItemsSource="{Binding PlayList}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="5" HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="{Binding LoadedImage}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" Width="100" Height="100" />
+                        <TextBlock Text="{Binding FileName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <!--</StackPanel>-->
         <Button x:Name="Play" Content="Play"  Command="{Binding PlayButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="775,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
         <Button Content="Pause" Grid.Column="3"  Command="{Binding PauseButtonCommand}" HorizontalAlignment="Left" Margin="815,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
