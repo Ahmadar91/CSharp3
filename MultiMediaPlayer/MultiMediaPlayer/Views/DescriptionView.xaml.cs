@@ -17,9 +17,9 @@ namespace MultiMediaPlayer.Views
     /// <summary>
     /// Interaction logic for Description.xaml
     /// </summary>
-    public partial class Description : Window
+    public partial class DescriptionView : Window
     {
-        public Description()
+        public DescriptionView()
         {
             InitializeComponent();
         }
@@ -31,11 +31,19 @@ namespace MultiMediaPlayer.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            if (string.IsNullOrEmpty(DescriptionTextBox.Text))
+            {
+                MessageBox.Show(@"Empty Input");
+                DialogResult = false;
+                return;
+            }
+            DialogResult = true;
+            Close();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            Close();
         }
     }
 }

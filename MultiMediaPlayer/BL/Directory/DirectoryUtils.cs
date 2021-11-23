@@ -43,7 +43,12 @@ namespace BL.Directory
 			return path.Substring(lastIndex + 1);
 		}
 
-
+		/// <summary>
+		/// Try and get directories from the folder
+		/// </summary>
+		/// <param name="fullPath"></param>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
 
 		public List<DirectoryItem> GetDirectoryContent(string fullPath)
 		{
@@ -51,7 +56,7 @@ namespace BL.Directory
 
 
 			// Try and get directories from the folder
-			// ignoring any issues doing so
+	
 			try
 			{
 				var dirs = System.IO.Directory.GetDirectories(fullPath);
@@ -68,10 +73,7 @@ namespace BL.Directory
                 throw new Exception($"IO Exception: {e.Message}");
 
 			}
-
-			// Try and get files from the folder
-			// ignoring any issues doing so
-			try
+            try
 			{
 				var fs = System.IO.Directory.GetFiles(fullPath);
 

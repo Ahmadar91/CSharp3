@@ -35,5 +35,26 @@ namespace MultiMediaPlayer
 			DataContext = new DirectoryStructureViewModel(this);
 			TreeView.DataContext = DataContext;
         }
+        /// <summary>
+        /// Allows to enable the button click in the grid list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlayButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ds = DataContext as DirectoryStructureViewModel;
+            ds?.PlayButtonCommand.Execute(sender);
+
+        }
+        /// <summary>
+        /// Allows to enable the button click in the grid list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            var ds = DataContext as DirectoryStructureViewModel;
+            ds?.EditButtonCommand.Execute(sender);
+        }
     }
 }

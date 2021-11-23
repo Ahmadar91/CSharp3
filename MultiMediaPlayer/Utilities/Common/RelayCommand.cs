@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Utilities.Common
 {
-	public class RelayCommand : ICommand
+    public class RelayCommand : ICommand
 	{
 		private readonly Action _action;
 
@@ -12,13 +12,20 @@ namespace Utilities.Common
 			_action = action;
 		}
 		public event EventHandler? CanExecuteChanged = (Sender, e) => { };
-
+		/// <summary>
+		/// Checks of a Command can be executed set to true
+		/// </summary>
+		/// <param name="parameter"></param>
+		/// <returns></returns>
 		public bool CanExecute(object? parameter)
 		{
 			return true;
 		}
-
-		public void Execute(object? parameter)
+		/// <summary>
+		/// Executes a Command
+		/// </summary>
+		/// <param name="parameter"></param>
+        public void Execute(object? parameter)
 		{
 			_action();
 		}

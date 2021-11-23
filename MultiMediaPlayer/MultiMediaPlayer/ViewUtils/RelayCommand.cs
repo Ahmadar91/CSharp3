@@ -17,7 +17,11 @@ namespace MultiMediaPlayer.ViewUtils
 			_execute = execute ?? throw new ArgumentNullException("execute");
 			_canExecute = canExecute;
 		}
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parameter"></param>
+		/// <returns></returns>
 		public bool CanExecute(object parameter)
 		{
 			return _canExecute == null || _canExecute(parameter);
@@ -28,7 +32,10 @@ namespace MultiMediaPlayer.ViewUtils
 			add => CommandManager.RequerySuggested += value;
 			remove => CommandManager.RequerySuggested -= value;
 		}
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parameter"></param>
 		public void Execute(object parameter)
 		{
 			_execute(parameter ?? "<N/A>");

@@ -13,22 +13,20 @@ namespace MultiMediaPlayer.ViewModels
     {
         private readonly Player _player;
         private readonly ObservableCollection<DirectoryItemViewModel> _playlist;
-        private DispatcherTimer _timer = new DispatcherTimer();
+        private readonly DispatcherTimer _timer = new();
 
-        private int _imageNumber = 0;
+        private int _itemNumber = 0;
         public PlayerViewModel(Player player, ObservableCollection<DirectoryItemViewModel> playlist)
         {
             _player = player;
             _playlist = playlist;
             BeginSlideShow();
         }
+        /// <summary>
+        /// Begins the slide show
+        /// </summary>
         private void BeginSlideShow()
         {
-            if (_playlist.Count <= 0)
-            {
-                MessageBox.Show(" playlist is empty please insert Items in to the playlist");
-            }
-
             var firstItem = _playlist[0].FullPath;
             if (firstItem.EndsWith(".jpg", StringComparison.CurrentCultureIgnoreCase) || firstItem.EndsWith(".png", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -47,25 +45,33 @@ namespace MultiMediaPlayer.ViewModels
             _timer.Start();
 
         }
-
+        /// <summary>
+        /// Timer tick to update each item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Tick(object sender, System.EventArgs e)
         {
-            _imageNumber = (_imageNumber + 1);
+            _itemNumber++;
 
-            if (!(_imageNumber).Equals(_playlist.Count))
+            if (!(_itemNumber).Equals(_playlist.Count))
             {
                 _timer.IsEnabled = true;
-                ShowNextImage(_player.image, _player.video);
+                ShowNextItem(_player.image, _player.video);
             }
             else
             {
                 _timer.IsEnabled = false;
             }
         }
-
-        private void ShowNextImage(Image img, MediaElement video)
+        /// <summary>
+        /// Sets the next item to play in the play list
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="video"></param>
+        private void ShowNextItem(Image img, MediaElement video)
         {
-            var item = _playlist[_imageNumber];
+            var item = _playlist[_itemNumber];
             Storyboard sb = new Storyboard();
             if (item.FullPath.EndsWith("jpg", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith("png", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -73,69 +79,40 @@ namespace MultiMediaPlayer.ViewModels
                 {
                     if (!video.Position.Equals(video.NaturalDuration.TimeSpan))
                     {
-                        _imageNumber--;
+                        _itemNumber--;
                         return;
                     }
                 }
                 video.Source = null;
                 img.Visibility = Visibility.Visible;
-                const double transition_time = 0.9;
-                // ***************************
-                // Animate Opacity 1.0 --> 0.0
-                // ***************************
-                DoubleAnimation fade_out = new DoubleAnimation(1.0, 0.0,
-                    TimeSpan.FromSeconds(transition_time));
+                const double transitionTime = 0.9;
+                var fade_out = new DoubleAnimation(1.0, 0.0,
+                    TimeSpan.FromSeconds(transitionTime));
                 fade_out.BeginTime = TimeSpan.FromSeconds(0);
 
-                // Use the Storyboard to set the target property.
                 Storyboard.SetTarget(fade_out, img);
                 Storyboard.SetTargetProperty(fade_out,
                     new PropertyPath(Image.OpacityProperty));
-
-                // Add the animation to the StoryBoard.
                 sb.Children.Add(fade_out);
-
-
-                // *********************************
-                // Animate displaying the new image.
-                // *********************************
-                ObjectAnimationUsingKeyFrames new_image_animation =
+                var new_image_animation =
                     new ObjectAnimationUsingKeyFrames();
-                // Start after the first animation has finisheed.
-                new_image_animation.BeginTime = TimeSpan.FromSeconds(transition_time);
-
-                // Add a key frame to the animation.
-                // It should be at time 0 after the animation begins.
-                DiscreteObjectKeyFrame new_image_frame =
+                new_image_animation.BeginTime = TimeSpan.FromSeconds(transitionTime);
+                var new_image_frame =
                     new DiscreteObjectKeyFrame(new BitmapImage(new Uri(item.FullPath)), TimeSpan.Zero);
                 new_image_animation.KeyFrames.Add(new_image_frame);
-
-                // Use the Storyboard to set the target property.
                 Storyboard.SetTarget(new_image_animation, img);
                 Storyboard.SetTargetProperty(new_image_animation,
                     new PropertyPath(Image.SourceProperty));
-
-                // Add the animation to the StoryBoard.
                 sb.Children.Add(new_image_animation);
+                var fade_in = new DoubleAnimation(0.0, 1.0,
+                    TimeSpan.FromSeconds(transitionTime));
+                fade_in.BeginTime = TimeSpan.FromSeconds(transitionTime);
 
-
-                // ***************************
-                // Animate Opacity 0.0 --> 1.0
-                // ***************************
-                // Start when the first animation ends.
-                DoubleAnimation fade_in = new DoubleAnimation(0.0, 1.0,
-                    TimeSpan.FromSeconds(transition_time));
-                fade_in.BeginTime = TimeSpan.FromSeconds(transition_time);
-
-                // Use the Storyboard to set the target property.
                 Storyboard.SetTarget(fade_in, img);
                 Storyboard.SetTargetProperty(fade_in,
                     new PropertyPath(Image.OpacityProperty));
 
-                // Add the animation to the StoryBoard.
                 sb.Children.Add(fade_in);
-
-                // Start the storyboard on the img control.
                 sb.Begin(img);
             }
 
@@ -148,8 +125,6 @@ namespace MultiMediaPlayer.ViewModels
                 {
                     while (true)
                     {
-                        if (video.NaturalDuration.HasTimeSpan)
-                            _player.label.Content = $"{video.Position:mm\\:ss} / {video.NaturalDuration.TimeSpan:mm\\:ss}";
                         if (video.Position.Equals(video.NaturalDuration.TimeSpan))
                         {
                             video.Source = new Uri(item.FullPath, UriKind.RelativeOrAbsolute);
@@ -163,21 +138,6 @@ namespace MultiMediaPlayer.ViewModels
 
                 }
             }
-        }
-
-        private void btnPlay_Click(object sender, RoutedEventArgs e)
-        {
-            _player.video.Play();
-        }
-
-        private void btnPause_Click(object sender, RoutedEventArgs e)
-        {
-            _player.video.Pause();
-        }
-
-        private void btnStop_Click(object sender, RoutedEventArgs e)
-        {
-            _player.video.Stop();
         }
 
     }

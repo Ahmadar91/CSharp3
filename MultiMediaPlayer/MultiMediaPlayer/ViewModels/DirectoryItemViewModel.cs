@@ -29,6 +29,10 @@ namespace MultiMediaPlayer.ViewModels
 		/// The full path to the item
 		/// </summary>
 		public string FullPath { get; set; }
+		/// <summary>
+		/// The Description of the item
+		/// </summary>
+		public string Description { get; set; }
 
         /// <summary>
         /// Loaded Image of the item
@@ -58,12 +62,9 @@ namespace MultiMediaPlayer.ViewModels
 			get => Children?.Count(f => f != null) > 0;
 			set
 			{
-				// If the UI tells us to expand...
 				if (value)
-					// Find all children
 					Expand();
-				// If the UI tells us to close
-				else
+                else
 					ClearChildren();
 			}
 		}
@@ -81,26 +82,18 @@ namespace MultiMediaPlayer.ViewModels
 		public DirectoryItemViewModel(string fullPath, DirectoryItemType type, DirectoryUtils du)
 		{
 			_du = du;
-			// Create commands
 			ExpandCommand = new RelayCommand(Expand);
-
-			// Set path and type
-			FullPath = fullPath;
+            FullPath = fullPath;
 			Type = type;
-
-			// Setup the children as needed
-			ClearChildren();
+            ClearChildren();
 		}
 		/// <summary>
 		/// Removes all children from the list, adding a dummy item to show the expand icon if required
 		/// </summary>
 		private void ClearChildren()
 		{
-			// Clear items
 			Children = new ObservableCollection<DirectoryItemViewModel>();
-
-			// Show the expand arrow if we are not a file
-			if (Type != DirectoryItemType.File)
+            if (Type != DirectoryItemType.File)
 				Children.Add(null);
 		}
 		/// <summary>
@@ -108,12 +101,9 @@ namespace MultiMediaPlayer.ViewModels
 		/// </summary>
 		private void Expand()
 		{
-			// We cannot expand a file
 			if (Type == DirectoryItemType.File)
 				return;
-
-			// Find all children
-			var children = _du.GetDirectoryContent(FullPath);
+            var children = _du.GetDirectoryContent(FullPath);
 			Children = new ObservableCollection<DirectoryItemViewModel>(
 								children.Select(content => new DirectoryItemViewModel(content.FullPath, content.Type, _du)));
 		}
