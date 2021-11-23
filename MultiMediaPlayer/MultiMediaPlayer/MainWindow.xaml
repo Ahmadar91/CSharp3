@@ -48,11 +48,11 @@
 
         <views:DirectoryStructureView Grid.Column="3" Grid.Row="5" x:Name="TreeView" Margin="26,18,112,0" />
 
-        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="378,532,87,14" x:Name="Grid"  ItemsSource="{Binding PlayList}"  CanUserAddRows="True" Grid.ColumnSpan="2">
+        <DataGrid AutoGenerateColumns="False"  Grid.Column="3" Grid.Row="5" Margin="378,532,87,14" x:Name="Grid"  ItemsSource="{Binding Albums}"  CanUserAddRows="False" Grid.ColumnSpan="2">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="FileName" IsReadOnly="True" Binding="{Binding Path=FileName}" Width="160"></DataGridTextColumn>
-                <DataGridTextColumn Header="FullPath" IsReadOnly="True"  Binding="{Binding Path=FullPath}" Width="130"></DataGridTextColumn>
-                <DataGridTextColumn Header="Description" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Header="Description" IsReadOnly="True" Binding="{Binding Path=Description}" Width="160"></DataGridTextColumn>
+                <!--<DataGridTextColumn Header="FullPath" IsReadOnly="True"  Binding="{Binding Path=FullPath}" Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Description" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="100"></DataGridTextColumn>-->
                 <!--<DataGridTextColumn Header="Description" IsReadOnly="True"  Binding="{Binding Path=FileName}" Width="130"></DataGridTextColumn>-->
             </DataGrid.Columns>
         </DataGrid>
@@ -60,10 +60,11 @@
         <Button Content="Down"  Command="{Binding MoveDownCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,573,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
         <Button Content="Add" Command="{Binding AddButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,605,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
         <Button Content="Remove" Command="{Binding DeleteButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,636,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Edit" Command="{Binding EditButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,679,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
 
         <!--<StackPanel Grid.Column="3"
                     HorizontalAlignment="Left" Height="372" Margin="341,44,0,0" Grid.Row="5" VerticalAlignment="Top" Width="784" Grid.ColumnSpan="2">-->
-        <ListView x:Name="TvBox" HorizontalAlignment="Left" Margin="378,50,0,310" Grid.Row="5" Width="698" Grid.Column="3" Grid.ColumnSpan="2" ItemsSource="{Binding PlayList}">
+        <ListView x:Name="TvBox" HorizontalAlignment="Left" Margin="378,56,0,310" Grid.Row="5" Width="683" Grid.Column="3" Grid.ColumnSpan="2"   ItemsSource="{Binding ElementName=Grid, Path=SelectedItem.PlayList}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="5" HorizontalAlignment="Stretch"/>
@@ -74,12 +75,17 @@
                     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Image Source="{Binding LoadedImage}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" Width="100" Height="100" />
                         <TextBlock Text="{Binding FileName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        <TextBlock Text="{Binding FileName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
         <!--</StackPanel>-->
-        <Button x:Name="Play" Content="Play"  Command="{Binding PlayButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="775,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
-        <Button Content="Pause" Grid.Column="3"  Command="{Binding PauseButtonCommand}" HorizontalAlignment="Left" Margin="815,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+        <Button x:Name="Play" Content="Play"  Command="{Binding PlayButtonCommand}" Grid.Column="3" HorizontalAlignment="Left" Margin="628,488,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+        <Button Content="Up" Command="{Binding MoveUpPlayListCommand}"  Grid.Column="4" HorizontalAlignment="Left" Margin="124,146,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Down"  Command="{Binding MoveDownPlayListCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,179,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Add" Command="{Binding AddPlayListButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,211,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <Button Content="Remove" Command="{Binding DeletePlayListButtonCommand}" Grid.Column="4" HorizontalAlignment="Left" Margin="124,242,0,0" Grid.Row="5" VerticalAlignment="Top" Width="53"/>
+        <!--<Button Content="Pause" Grid.Column="3"  Command="{Binding PauseButtonCommand}" HorizontalAlignment="Left" Margin="815,493,0,0" Grid.Row="5" VerticalAlignment="Top"/>-->
     </Grid>
 </Window>

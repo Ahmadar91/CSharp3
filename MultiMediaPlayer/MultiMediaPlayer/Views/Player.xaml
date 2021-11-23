@@ -5,19 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiMediaPlayer.Views"
         mc:Ignorable="d"
-        Title="Player" Height="450" Width="800">
+        Title="Player" Height="500" Width="800" MaxHeight="500" MaxWidth="800" MinHeight="500" MinWidth="800">
     <Grid>
-        <Image x:Name="image" Margin="39,59,37,51" />
-        <MediaElement x:Name="video" Margin="38,59,37,47"/>
-        <Label x:Name="label" Width="376" Margin="213,396,211,21" RenderTransformOrigin="0.5,0.5" >
-            <Label.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Label.RenderTransform>
-        </Label>
+        <Image x:Name="image" Margin="39,59,43,106" />
+        <MediaElement x:Name="video" Margin="38,59,39,105"/>
+        <Label x:Name="label" Content="" Width="376" Margin="231,370,193,40" RenderTransformOrigin="0.5,0.5" ></Label>
     </Grid>
 </Window>

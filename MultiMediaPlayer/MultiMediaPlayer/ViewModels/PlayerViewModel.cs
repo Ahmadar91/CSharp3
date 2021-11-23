@@ -1,11 +1,11 @@
-﻿using System;
+﻿using MultiMediaPlayer.Views;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using MultiMediaPlayer.Views;
 
 namespace MultiMediaPlayer.ViewModels
 {
@@ -48,13 +48,37 @@ namespace MultiMediaPlayer.ViewModels
 
         }
 
+        private void Tick(object sender, System.EventArgs e)
+        {
+            _imageNumber = (_imageNumber + 1);
+
+            if (!(_imageNumber).Equals(_playlist.Count))
+            {
+                _timer.IsEnabled = true;
+                ShowNextImage(_player.image, _player.video);
+            }
+            else
+            {
+                _timer.IsEnabled = false;
+            }
+        }
+
         private void ShowNextImage(Image img, MediaElement video)
         {
             var item = _playlist[_imageNumber];
             Storyboard sb = new Storyboard();
             if (item.FullPath.EndsWith("jpg", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith("png", StringComparison.InvariantCultureIgnoreCase))
             {
+                if (video.NaturalDuration.HasTimeSpan)
+                {
+                    if (!video.Position.Equals(video.NaturalDuration.TimeSpan))
+                    {
+                        _imageNumber--;
+                        return;
+                    }
+                }
                 video.Source = null;
+                img.Visibility = Visibility.Visible;
                 const double transition_time = 0.9;
                 // ***************************
                 // Animate Opacity 1.0 --> 0.0
@@ -118,6 +142,8 @@ namespace MultiMediaPlayer.ViewModels
             if (item.FullPath.EndsWith("mp4", StringComparison.CurrentCultureIgnoreCase) || item.FullPath.EndsWith("wav", StringComparison.InvariantCultureIgnoreCase))
             {
                 img.Source = null;
+                img.Visibility = Visibility.Hidden;
+
                 if (video.Source != null)
                 {
                     while (true)
@@ -134,25 +160,9 @@ namespace MultiMediaPlayer.ViewModels
                 else
                 {
                     video.Source = new Uri(item.FullPath, UriKind.RelativeOrAbsolute);
+
                 }
             }
-        }
-
-        private void Tick(object sender, System.EventArgs e)
-        {
-            _imageNumber = (_imageNumber + 1);
-
-            if (!(_imageNumber).Equals(_playlist.Count))
-            {
-                _timer.IsEnabled = true;
-                ShowNextImage(_player.image, _player.video);
-            }
-            else
-            {
-                _timer.IsEnabled = false;
-            }
-
-
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
@@ -167,7 +177,7 @@ namespace MultiMediaPlayer.ViewModels
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
-             _player.video.Stop();
+            _player.video.Stop();
         }
 
     }
