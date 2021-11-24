@@ -1,0 +1,15 @@
+﻿<Window x:Class="MultiMediaPlayer.Views.DescriptionView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultiMediaPlayer.Views"
+        mc:Ignorable="d"
+        Title="Description" Height="198" Width="513" Closed="Window_Closed">
+    <Grid>
+        <TextBox x:Name="DescriptionTextBox" HorizontalAlignment="Left" Margin="212,49,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="269" Height="51"/>
+        <Label Content="Description :" HorizontalAlignment="Left" Margin="44,62,0,0" VerticalAlignment="Top" Width="130"/>
+        <Button Content="Cancel" HorizontalAlignment="Left" Margin="151,130,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <Button Content="Ok" HorizontalAlignment="Left" Margin="286,130,0,0" VerticalAlignment="Top" Width="47" Click="Button_Click"/>
+    </Grid>
+</Window>
