@@ -44,15 +44,6 @@ namespace MultiMediaPlayer.ViewModels
         /// </summary>
         public string FullPath { get; set; }
         /// <summary>
-        /// The Description of the item
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Loaded Image of the item
-        /// </summary>
-        public BitmapImage LoadedImage { get; set; }
-        /// <summary>
         /// The name of this directory item
         /// </summary>
         public string FileName => Type == DirectoryItemType.Drive ? FullPath : DirectoryExtensions.GetFileFolderName(FullPath);

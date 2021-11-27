@@ -15,7 +15,7 @@ namespace MultiMediaPlayer.Views
     /// </summary>
     public partial class Player : Window
     {
-        public Player(ObservableCollection<DirectoryItemViewModel> playlist)
+        public Player(ObservableCollection<PlayListViewModel> playlist)
         {
             InitializeComponent();
             DataContext = new PlayerViewModel(this, playlist);

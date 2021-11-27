@@ -12,14 +12,15 @@ namespace MultiMediaPlayer.ViewModels
     public class PlayerViewModel
     {
         private readonly Player _player;
-        private readonly ObservableCollection<DirectoryItemViewModel> _playlist;
+        private readonly ObservableCollection<PlayListViewModel> _playlist;
         private readonly DispatcherTimer _timer = new();
 
         private int _itemNumber = 0;
-        public PlayerViewModel(Player player, ObservableCollection<DirectoryItemViewModel> playlist)
+        public PlayerViewModel(Player player, ObservableCollection<PlayListViewModel> playlist)
         {
             _player = player;
             _playlist = playlist;
+            _player.video.Volume = 50;
             BeginSlideShow();
         }
         /// <summary>

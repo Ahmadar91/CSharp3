@@ -31,13 +31,7 @@ namespace MultiMediaPlayer
 		/// </summary>
 		public MainWindow()
 		{
-
-			InitializeComponent();
-
-            var test = new AlbumOperations();
-            test.DbTest();
-
-
+            InitializeComponent();
             DataContext = new DirectoryStructureViewModel(this);
 			TreeView.DataContext = DataContext;
         }

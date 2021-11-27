@@ -1,7 +1,10 @@
-﻿using BL.Directory;
+﻿using BL.DbOperations;
+using BL.Directory;
 using BL.Models;
+using DAL.Models;
 using MultiMediaPlayer.Views;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -31,13 +34,14 @@ namespace MultiMediaPlayer.ViewModels
         public ICommand MoveUpPlayListCommand { get; set; }
         public ICommand MoveDownPlayListCommand { get; set; }
         public ICommand EditPlayListButtonCommand { get; set; }
+        public DbOperation DbOperation { get; set; }
         /// <summary>
         ///  constructor
         /// </summary>
         /// <param name="mainWindow"></param>
         public DirectoryStructureViewModel(MainWindow mainWindow)
         {
-
+            DbOperation = new DbOperation();
             MediaFileTypes = new MediaFileTypes
             {
                 JPG =
@@ -76,8 +80,48 @@ namespace MultiMediaPlayer.ViewModels
             Items = new ObservableCollection<DirectoryItemViewModel>(du.GetLogicalDrives().Select(drive => new DirectoryItemViewModel(drive.FullPath, DirectoryItemType.Drive, du)));
             _mainWindow.TreeView.MouseDoubleClick += TreeView_MouseDoubleClick;
             _mainWindow.AlbumPlayList.MouseDoubleClick += AlbumPlayList_MouseDoubleClick;
+            InitializeComponent();
 
         }
+
+        private void InitializeComponent()
+        {
+            Albums = new ObservableCollection<AlbumViewModel>();
+            _mainWindow.AlbumPlayList.DataContext = Albums;
+            var AlbumCollection = DbOperation.AlbumDbOperation.GetAll();
+
+            foreach (Album album in AlbumCollection)
+            {
+                Albums.Add(new AlbumViewModel
+                {
+                    Id = album.Id,
+                    Description = album.Description,
+                    PlayList = new ObservableCollection<PlayListViewModel>(album.PlayList.Select(x => new PlayListViewModel
+                    {
+                        Id = x.Id,
+                        FullPath = x.FullPath,
+                        Description = x.Description,
+                        FileName = x.FileName,
+                        AlbumId = x.AlbumId,
+                        LoadedImage = LoadThumbnail(x.FullPath)
+                    })),
+                    Count = album.Count
+                });
+            }
+        }
+
+        private BitmapImage LoadThumbnail(string argFullPath)
+        {
+            if (argFullPath.EndsWith("wav", StringComparison.CurrentCultureIgnoreCase) || argFullPath.EndsWith("mp4", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return GetThumbnail(argFullPath, 500, 500);
+            }
+            else
+            {
+                return new BitmapImage(new Uri(argFullPath));
+            }
+        }
+
         /// <summary>
         /// Edit a playList item
         /// </summary>
@@ -94,30 +138,31 @@ namespace MultiMediaPlayer.ViewModels
         {
             try
             {
-                var selectedInded = _mainWindow.Grid.SelectedIndex;
-                if (selectedInded >= 0)
+                var selectedAlbum = _mainWindow.Grid.SelectedValue as AlbumViewModel;
+                if (selectedAlbum != null)
                 {
                     var selectedItem = _mainWindow.TreeView.FolderView.SelectedValue as DirectoryItemViewModel;
                     if (selectedItem != null && selectedItem.Type.Equals(DirectoryItemType.File))
                     {
                         if (MediaFileTypes.PNG.IsChecked != null && MediaFileTypes.JPG.IsChecked != null && (MediaFileTypes.JPG.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".jpg")
-                                || MediaFileTypes.PNG.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".png")))
-                        {
-                            selectedItem.LoadedImage = new BitmapImage(new Uri(selectedItem.FullPath));
-                            Albums[selectedInded].Count++;
-                            Albums[selectedInded].PlayList.Add(selectedItem);
-                        }
-                        else if (MediaFileTypes.WAV.IsChecked != null && MediaFileTypes.MP4.IsChecked != null && (MediaFileTypes.MP4.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".mp4")
-                                     || MediaFileTypes.WAV.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".wav")))
+                                || MediaFileTypes.PNG.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".png")) || MediaFileTypes.WAV.IsChecked != null && MediaFileTypes.MP4.IsChecked != null && (MediaFileTypes.MP4.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".mp4")
+                                || MediaFileTypes.WAV.IsChecked.Value && selectedItem.FullPath.ToLowerInvariant().EndsWith(".wav")))
                         {
                             var descriptionView = new DescriptionView();
                             var descDialog = descriptionView.ShowDialog();
                             if (descriptionView.DialogResult.HasValue && descriptionView.DialogResult.Value)
                             {
-                                selectedItem.Description = descriptionView.DescriptionTextBox.Text;
-                                selectedItem.LoadedImage = GetThumbnail(selectedItem.FullPath, 500, 500);
-                                Albums[selectedInded].Count++;
-                                Albums[selectedInded].PlayList.Add(selectedItem);
+                                DbOperation.PlayListDbOperation.Add(new PlayListItem()
+                                {
+                                    Description = descriptionView.DescriptionTextBox.Text,
+                                    AlbumId = selectedAlbum.Id,
+                                    FileName = selectedItem.FileName,
+                                    FullPath = selectedItem.FullPath
+                                });
+                                var albumToedit = DbOperation.AlbumDbOperation.GetById(selectedAlbum.Id);
+                                albumToedit.Count++;
+                                DbOperation.AlbumDbOperation.Edit(albumToedit);
+                                InitializeComponent();
                             }
                         }
                         else
@@ -149,15 +194,18 @@ namespace MultiMediaPlayer.ViewModels
         /// </summary>
         private void EditButtonClick()
         {
-            var selectedIndex = _mainWindow.Grid.SelectedIndex;
-            if (selectedIndex >= 0)
+            var selectedAlbum = _mainWindow.Grid.SelectedValue as AlbumViewModel;
+            if (selectedAlbum != null)
             {
                 var descriptionView = new DescriptionView();
-                descriptionView.DescriptionTextBox.Text = Albums[selectedIndex].Description;
+                descriptionView.DescriptionTextBox.Text = selectedAlbum.Description;
                 var desDialog = descriptionView.ShowDialog();
                 if (descriptionView.DialogResult.HasValue && descriptionView.DialogResult.Value)
                 {
-                    Albums[selectedIndex].Description = descriptionView.DescriptionTextBox.Text;
+                    var albumToEdit = DbOperation.AlbumDbOperation.GetById(selectedAlbum.Id);
+                    albumToEdit.Description = descriptionView.DescriptionTextBox.Text;
+                    DbOperation.AlbumDbOperation.Edit(albumToEdit);
+                    InitializeComponent();
                 }
             }
 
@@ -167,23 +215,26 @@ namespace MultiMediaPlayer.ViewModels
         /// </summary>
         private void EditPlayListButtonClick()
         {
-            var selectedIndex = _mainWindow.Grid.SelectedIndex;
-            if (selectedIndex >= 0)
+            var selectedAlbum = _mainWindow.Grid.SelectedValue as AlbumViewModel;
+            if (selectedAlbum != null)
             {
-                var index = _mainWindow.AlbumPlayList.SelectedIndex;
-                if (index >= 0)
+                var item = _mainWindow.AlbumPlayList.SelectedValue as PlayListViewModel;
+                if (item != null)
                 {
                     var descriptionView = new DescriptionView
                     {
                         DescriptionTextBox =
                         {
-                            Text = Albums[selectedIndex].PlayList[selectedIndex].Description
+                            Text = item.Description
                         }
                     };
                     var desDialog = descriptionView.ShowDialog();
                     if (descriptionView.DialogResult.HasValue && descriptionView.DialogResult.Value)
                     {
-                        Albums[selectedIndex].PlayList[selectedIndex].Description = descriptionView.DescriptionTextBox.Text;
+                        var itemToEdit = DbOperation.PlayListDbOperation.GetById(item.Id);
+                        itemToEdit.Description = descriptionView.DescriptionTextBox.Text;
+                        DbOperation.PlayListDbOperation.Edit(itemToEdit);
+                        InitializeComponent();
                     }
                 }
 
@@ -197,21 +248,38 @@ namespace MultiMediaPlayer.ViewModels
         {
             try
             {
-                if (Albums == null)
-                {
-                    Albums = new ObservableCollection<AlbumViewModel>();
-                    _mainWindow.AlbumPlayList.DataContext = Albums;
-                }
-                var album = new AlbumViewModel
-                {
-                    PlayList = new ObservableCollection<DirectoryItemViewModel>()
-                };
                 var descriptionView = new DescriptionView();
                 var decDialog = descriptionView.ShowDialog();
                 if (descriptionView.DialogResult.HasValue && descriptionView.DialogResult.Value)
                 {
-                    album.Description = descriptionView.DescriptionTextBox.Text;
-                    Albums.Add(album);
+                    DbOperation.AlbumDbOperation.Add(new Album
+                    {
+                        Description = descriptionView.DescriptionTextBox.Text,
+                        PlayList = new List<PlayListItem>(),
+                    });
+
+                    var AlbumCollection = DbOperation.AlbumDbOperation.GetAll();
+                    Albums = new ObservableCollection<AlbumViewModel>();
+                    _mainWindow.AlbumPlayList.DataContext = Albums;
+
+                    foreach (Album album in AlbumCollection)
+                    {
+                        var test = album.PlayList.ToList().Select(x => new PlayListViewModel());
+                        Albums.Add(new AlbumViewModel
+                        {
+                            Id = album.Id,
+                            Description = album.Description,
+                            PlayList = new ObservableCollection<PlayListViewModel>(album.PlayList.Select(x => new PlayListViewModel
+                            {
+                                Id = x.Id,
+                                FullPath = x.FullPath,
+                                Description = x.Description,
+                                FileName = x.FileName,
+                                AlbumId = x.AlbumId,
+                            })),
+                            Count = album.Count
+                        });
+                    }
                 }
             }
             catch (Exception e)
@@ -227,11 +295,11 @@ namespace MultiMediaPlayer.ViewModels
         {
             try
             {
-                var selectedItem = _mainWindow.Grid.SelectedIndex;
-                if (selectedItem >= 0)
+                if (_mainWindow.Grid.SelectedValue is AlbumViewModel selectedItem)
                 {
-                    Albums.RemoveAt(selectedItem);
+                    DbOperation.AlbumDbOperation.Delete(selectedItem.Id);
                 }
+                InitializeComponent();
             }
             catch (Exception e)
             {
@@ -311,13 +379,17 @@ namespace MultiMediaPlayer.ViewModels
         {
             try
             {
-                var selectedAlbum = _mainWindow.Grid.SelectedIndex;
-                if (selectedAlbum >= 0)
+                var selectedAlbum = _mainWindow.Grid.SelectedValue as AlbumViewModel;
+                if (selectedAlbum != null)
                 {
-                    var index = _mainWindow.AlbumPlayList.SelectedIndex;
-                    if (index >= 0)
+                    var item = _mainWindow.AlbumPlayList.SelectedValue as PlayListViewModel;
+                    if (item != null)
                     {
-                        Albums[selectedAlbum].PlayList.RemoveAt(index);
+                        DbOperation.PlayListDbOperation.Delete(item.Id);
+                        var alb = DbOperation.AlbumDbOperation.GetById(selectedAlbum.Id);
+                        alb.Count--;
+                        DbOperation.AlbumDbOperation.Edit(alb);
+                        InitializeComponent();
                     }
                 }
                 else
@@ -441,8 +513,19 @@ namespace MultiMediaPlayer.ViewModels
     /// </summary>
     public class AlbumViewModel : BaseViewModel
     {
+        public Guid Id { get; set; }
         public string Description { get; set; }
-        public ObservableCollection<DirectoryItemViewModel> PlayList { set; get; }
+        public ObservableCollection<PlayListViewModel> PlayList { set; get; }
         public int Count { get; set; }
+    }
+
+    public class PlayListViewModel
+    {
+        public Guid Id { get; set; }
+        public string FullPath { get; set; }
+        public string Description { get; set; }
+        public string FileName { get; set; }
+        public Guid AlbumId { get; set; }
+        public BitmapImage LoadedImage { get; set; }
     }
 }
