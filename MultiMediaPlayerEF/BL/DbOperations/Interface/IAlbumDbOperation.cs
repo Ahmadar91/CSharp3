@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using BL.Models;
 using DAL.Core;
 using DAL.Models;
 
@@ -8,11 +9,11 @@ namespace BL.DbOperations.Interface
 {
     public interface IAlbumDbOperation
     {
-        IEnumerable<Album> GetAll();
-        Album GetById(Guid id);
-        bool Add(Album entity);
+        IEnumerable<AlbumDto> GetAll();
+        AlbumDto GetById(Guid id);
+        bool Add(AlbumDto entity);
         bool Delete(Guid id);
-        bool Edit(Album entity);
-        IEnumerable<Album> Find(Expression<Func<Album, bool>> predicate);
+        bool Edit(AlbumDto entity);
+        IEnumerable<AlbumDto> Find(Expression<Func<Album, bool>> predicate);
     }
 }

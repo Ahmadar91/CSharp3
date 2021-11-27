@@ -3,37 +3,49 @@ using DAL.Core;
 using DAL.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using BL.Models;
 
 namespace BL.DbOperations
 {
     public class AlbumOperations : IAlbumDbOperation
     {
         private readonly IUnitOfWork _unitOfWork;
-        public AlbumOperations(IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+
+        public AlbumOperations(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public IEnumerable<Album> GetAll()
+        public IEnumerable<AlbumDto> GetAll()
         {
-            return _unitOfWork.Album.All();
+            var albums = _unitOfWork.Album.All();
+            return _mapper.Map(albums);
         }
 
-        public Album GetById(Guid id)
+        public AlbumDto GetById(Guid id)
         {
-            return _unitOfWork.Album.GetById(id);
+            var album = _unitOfWork.Album.GetById(id);
+            return _mapper.Map(album);
         }
 
-        public bool Add(Album entity)
+        public bool Add(AlbumDto entity)
         {
-            var res = _unitOfWork.Album.Add(entity);
-            if (res)
+            if (entity != null)
             {
-                _unitOfWork.Complete();
+                var res = _unitOfWork.Album.Add(_mapper.Map(entity));
+                if (res)
+                {
+                    _unitOfWork.Complete();
+                }
+
+                return res;
             }
-            return res;
+            return false;
         }
 
         public bool Delete(Guid id)
@@ -46,18 +58,18 @@ namespace BL.DbOperations
             return result;
         }
 
-        public bool Edit(Album entity)
+        public bool Edit(AlbumDto entity)
         {
-            var result = _unitOfWork.Album.Upsert(entity);
+            var result = _unitOfWork.Album.Upsert(_mapper.Map(entity));
             if (result)
             {
                 _unitOfWork.Complete();
             }
             return result;
         }
-        public IEnumerable<Album> Find(Expression<Func<Album, bool>> predicate)
+        public IEnumerable<AlbumDto> Find(Expression<Func<Album, bool>> predicate)
         {
-            return _unitOfWork.Album.Find(predicate);
+            return _mapper.Map(_unitOfWork.Album.Find(predicate));
         }
     }
 }

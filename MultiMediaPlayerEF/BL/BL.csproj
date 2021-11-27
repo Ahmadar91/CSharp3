@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DbOperations\Mapper\" />
     <Folder Include="Directory\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>

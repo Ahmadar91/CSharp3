@@ -1,17 +1,14 @@
 ﻿using BL.DbOperations;
 using BL.Directory;
 using BL.Models;
-using DAL.Models;
 using MultiMediaPlayer.Views;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using MultiMediaPlayer.Mapper;
 using Utilities.Common;
 
 namespace MultiMediaPlayer.ViewModels
@@ -34,6 +31,7 @@ namespace MultiMediaPlayer.ViewModels
         public ICommand MoveUpPlayListCommand { get; set; }
         public ICommand MoveDownPlayListCommand { get; set; }
         public ICommand EditPlayListButtonCommand { get; set; }
+        public IMapper Mapper { get; set; }
         public DbOperation DbOperation { get; set; }
         /// <summary>
         ///  constructor
@@ -42,6 +40,7 @@ namespace MultiMediaPlayer.ViewModels
         public DirectoryStructureViewModel(MainWindow mainWindow)
         {
             DbOperation = new DbOperation();
+            Mapper = new Mapper.Mapper();
             MediaFileTypes = new MediaFileTypes
             {
                 JPG =
@@ -88,39 +87,15 @@ namespace MultiMediaPlayer.ViewModels
         {
             Albums = new ObservableCollection<AlbumViewModel>();
             _mainWindow.AlbumPlayList.DataContext = Albums;
-            var AlbumCollection = DbOperation.AlbumDbOperation.GetAll();
+            var albumCollection = DbOperation.AlbumDbOperation.GetAll();
 
-            foreach (Album album in AlbumCollection)
+            foreach (var album in albumCollection)
             {
-                Albums.Add(new AlbumViewModel
-                {
-                    Id = album.Id,
-                    Description = album.Description,
-                    PlayList = new ObservableCollection<PlayListViewModel>(album.PlayList.Select(x => new PlayListViewModel
-                    {
-                        Id = x.Id,
-                        FullPath = x.FullPath,
-                        Description = x.Description,
-                        FileName = x.FileName,
-                        AlbumId = x.AlbumId,
-                        LoadedImage = LoadThumbnail(x.FullPath)
-                    })),
-                    Count = album.Count
-                });
+                Albums.Add(Mapper.Map(album));
             }
         }
 
-        private BitmapImage LoadThumbnail(string argFullPath)
-        {
-            if (argFullPath.EndsWith("wav", StringComparison.CurrentCultureIgnoreCase) || argFullPath.EndsWith("mp4", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return GetThumbnail(argFullPath, 500, 500);
-            }
-            else
-            {
-                return new BitmapImage(new Uri(argFullPath));
-            }
-        }
+
 
         /// <summary>
         /// Edit a playList item
@@ -152,13 +127,13 @@ namespace MultiMediaPlayer.ViewModels
                             var descDialog = descriptionView.ShowDialog();
                             if (descriptionView.DialogResult.HasValue && descriptionView.DialogResult.Value)
                             {
-                                DbOperation.PlayListDbOperation.Add(new PlayListItem()
+                                DbOperation.PlayListDbOperation.Add(Mapper.Map(new PlayListViewModel
                                 {
                                     Description = descriptionView.DescriptionTextBox.Text,
                                     AlbumId = selectedAlbum.Id,
                                     FileName = selectedItem.FileName,
                                     FullPath = selectedItem.FullPath
-                                });
+                                }));
                                 var albumToedit = DbOperation.AlbumDbOperation.GetById(selectedAlbum.Id);
                                 albumToedit.Count++;
                                 DbOperation.AlbumDbOperation.Edit(albumToedit);
@@ -252,33 +227,19 @@ namespace MultiMediaPlayer.ViewModels
                 var decDialog = descriptionView.ShowDialog();
                 if (descriptionView.DialogResult.HasValue && descriptionView.DialogResult.Value)
                 {
-                    DbOperation.AlbumDbOperation.Add(new Album
+                    DbOperation.AlbumDbOperation.Add(Mapper.Map(new AlbumViewModel()
                     {
                         Description = descriptionView.DescriptionTextBox.Text,
-                        PlayList = new List<PlayListItem>(),
-                    });
+                        PlayList = new ObservableCollection<PlayListViewModel>(),
+                    }));
 
                     var AlbumCollection = DbOperation.AlbumDbOperation.GetAll();
                     Albums = new ObservableCollection<AlbumViewModel>();
                     _mainWindow.AlbumPlayList.DataContext = Albums;
 
-                    foreach (Album album in AlbumCollection)
+                    foreach (AlbumDto album in AlbumCollection)
                     {
-                        var test = album.PlayList.ToList().Select(x => new PlayListViewModel());
-                        Albums.Add(new AlbumViewModel
-                        {
-                            Id = album.Id,
-                            Description = album.Description,
-                            PlayList = new ObservableCollection<PlayListViewModel>(album.PlayList.Select(x => new PlayListViewModel
-                            {
-                                Id = x.Id,
-                                FullPath = x.FullPath,
-                                Description = x.Description,
-                                FileName = x.FileName,
-                                AlbumId = x.AlbumId,
-                            })),
-                            Count = album.Count
-                        });
+                        Albums.Add(Mapper.Map(album));
                     }
                 }
             }
@@ -465,46 +426,6 @@ namespace MultiMediaPlayer.ViewModels
         private void OpenOptions()
         {
             MediaFileTypes.Show();
-        }
-        /// <summary>
-        /// Get Thumbnail for Video
-        /// </summary>
-        /// <param name="mediaFile"></param>
-        /// <param name="waitTime"></param>
-        /// <param name="position"></param>
-        /// <returns></returns>
-        private BitmapImage GetThumbnail(string mediaFile, int waitTime, int position)
-        {
-            MediaPlayer player = new MediaPlayer { Volume = 0, ScrubbingEnabled = true };
-            player.Open(new Uri(mediaFile));
-            player.Pause();
-            player.Position = TimeSpan.FromMilliseconds(position);
-            System.Threading.Thread.Sleep(waitTime);
-            RenderTargetBitmap rtb = new RenderTargetBitmap(120, 90, 96, 96, PixelFormats.Pbgra32);
-            DrawingVisual dv = new DrawingVisual();
-            using (DrawingContext dc = dv.RenderOpen())
-            {
-                dc.DrawVideo(player, new Rect(0, 0, 120, 90));
-            }
-            rtb.Render(dv);
-            BitmapFrame frame = BitmapFrame.Create(rtb).GetCurrentValueAsFrozen() as BitmapFrame;
-            BitmapEncoder encoder = new JpegBitmapEncoder();
-            encoder.Frames.Add(frame as BitmapFrame);
-            MemoryStream memoryStream = new MemoryStream();
-            encoder.Save(memoryStream);
-            memoryStream.GetBuffer();
-            player.Close();
-            var Image = new BitmapImage();
-            using (var stream = new MemoryStream(memoryStream.GetBuffer()))
-            {
-                Image.BeginInit();
-                Image.CacheOption = BitmapCacheOption.OnLoad;
-                Image.StreamSource = stream;
-                Image.EndInit();
-            }
-
-            Image.Freeze();
-            return Image;
         }
     }
 
