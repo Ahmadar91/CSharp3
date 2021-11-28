@@ -13,14 +13,53 @@ using MultiMediaPlayer.ViewModels;
 namespace MultiMediaPlayer.Mapper
 {
     public interface IMapper
-    {
+    {/// <summary>
+    /// Map a AlbumViewModel to AlbumDTO
+    /// </summary>
+    /// <param name="album"></param>
+    /// <returns></returns>
         AlbumDto Map(AlbumViewModel album);
+    /// <summary>
+    /// Map a AlbumDTO to AlbumBViewModel
+    /// </summary>
+    /// <param name="albumDto"></param>
+    /// <returns></returns>
         AlbumViewModel Map(AlbumDto albumDto);
+    /// <summary>
+    /// Map a PlayListIViewModel to PlaylistItemDTO
+    /// </summary>
+    /// <param name="playListView"></param>
+    /// <returns></returns>
         PlayListItemDto Map(PlayListViewModel playListView);
+    /// <summary>
+    /// Map PlayListViewDTO to PlayListViewModel
+    /// </summary>
+    /// <param name="playListItemDto"></param>
+    /// <returns></returns>
         PlayListViewModel Map(PlayListItemDto playListItemDto);
+        /// <summary>
+        /// Map a IEnumerable AlbumDTO to IEnumerable AlbumViewModel
+        /// </summary>
+        /// <param name="albumDtos"></param>
+        /// <returns></returns>
         IEnumerable<AlbumViewModel> Map(IEnumerable<AlbumDto> albumDtos);
+        /// <summary>
+        /// Map IEnumerable AlbumViewModel to AlbumDTO
+        /// </summary>
+        /// <param name="albums"></param>
+        /// <returns></returns>
         IEnumerable<AlbumDto> Map(IEnumerable<AlbumViewModel> albums);
+        /// <summary>
+        /// Map IEnumerable PlayListItemDTO to IEnumerable PlayListViewModel
+        /// </summary>
+        /// <param name="playListItems"></param>
+        /// <returns></returns>
         IEnumerable<PlayListViewModel> Map(IEnumerable<PlayListItemDto> playListItems);
+        /// <summary>
+        /// IEnumerable PlaylistViewModel to IEnumerablePlayListItemDTO
+        /// </summary>
+        /// <param name="playListItemDtos"></param>
+        /// <returns></returns>
         IEnumerable<PlayListItemDto> Map(IEnumerable<PlayListViewModel> playListItemDtos);
     }
     public class Mapper : IMapper

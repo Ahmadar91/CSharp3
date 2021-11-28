@@ -22,12 +22,16 @@ namespace DAL.Core
             Album = new AlbumRepository(_context);
             PlayList = new PlayListItemRepository(_context);
         }
-
+        /// <summary>
+        /// Save the changes for a Entity
+        /// </summary>
         public void Complete()
         {
             _context.SaveChanges();
         }
-
+        /// <summary>
+        /// Dispose the context
+        /// </summary>
         public void Dispose()
         {
             _context.Dispose();
