@@ -5,8 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuizManager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="611" Width="987">
+    <Grid Margin="0,0,0,4">
+
+        <GroupBox Header="Courses" Margin="20,17,630,22">
+            <Grid Height="517" Margin="10,0,-2,0">
+                <Label Content="ID" HorizontalAlignment="Left" Margin="10,15,0,475" RenderTransformOrigin="0.024,-1.816" Width="26">
+                    <Label.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="1"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Label.RenderTransform>
+                </Label>
+                <TextBox TextWrapping="Wrap" Text="" Height="20" Margin="86,17,42,480"/>
+                <TextBox TextWrapping="Wrap" Text="" Height="20" Margin="86,57,42,440"/>
+                <TextBox TextWrapping="Wrap" Text="" Height="20" Margin="86,98,42,399"/>
+                <Label Content="Name" HorizontalAlignment="Left" Margin="10,55,0,439" Width="53"/>
+                <Label Content="Moments" HorizontalAlignment="Left" Margin="8,94,0,399" Width="62"/>
+                <Label Content="warning" HorizontalAlignment="Left" Margin="114,131,0,361" Width="54" RenderTransformOrigin="0.474,1.404"/>
+                <Button x:Name="addCourseBtn" Content="Add Course" HorizontalAlignment="Left" Margin="76,161,0,0" VerticalAlignment="Top" Width="148"/>
+                <ListView d:ItemsSource="{d:SampleData ItemCount=5}" Margin="8,197,169,108">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <ListView d:ItemsSource="{d:SampleData ItemCount=5}" Margin="159,197,18,108">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Button x:Name="deleteCourseBtn" Content="Delete Course" HorizontalAlignment="Left" Margin="11,426,0,0" VerticalAlignment="Top" Width="139"/>
+                <CheckBox Content="Link Mode" HorizontalAlignment="Left" Margin="231,453,0,0" VerticalAlignment="Top"/>
+                <Button x:Name="linkItemToCat" Content="Link item top to a Cat or Cat-Sub category" HorizontalAlignment="Left" Margin="11,475,0,0" VerticalAlignment="Top" Width="288" Height="24"/>
+
+            </Grid>
+
+        </GroupBox>
+
 
     </Grid>
 </Window>
