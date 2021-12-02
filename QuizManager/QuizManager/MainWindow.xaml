@@ -52,7 +52,7 @@
         </GroupBox>
 
         <TabControl Margin="362,23,298,346">
-            <TabItem Header="TabItem">
+            <TabItem Header="Show All Categories">
                 <Grid Background="#FFE5E5E5">
 
                     <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" RenderTransformOrigin="0.5,0.5">
@@ -70,7 +70,7 @@
                 </Grid>
 
             </TabItem>
-            <TabItem Header="TabItem">
+            <TabItem Header="Show for subcategory">
                 <Grid Background="#FFE5E5E5">
                     <ListBox d:ItemsSource="{d:SampleData ItemCount=8}" RenderTransformOrigin="0.5,0.5">
 
@@ -83,11 +83,15 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="371,320,0,0" VerticalAlignment="Top" Width="59"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="610,320,0,0" VerticalAlignment="Top" Width="59"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="530,320,0,0" VerticalAlignment="Top" Width="59"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="454,320,0,0" VerticalAlignment="Top" Width="59"/>
-        <TextBox HorizontalAlignment="Left" Margin="371,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="318" Height="221"/>
-        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="710,47,25,30"/>
+        <Button Content="Add new" HorizontalAlignment="Left" Margin="371,320,0,0" VerticalAlignment="Top" Width="59"/>
+        <Button Content="Delete" HorizontalAlignment="Left" Margin="530,320,0,0" VerticalAlignment="Top" Width="59"/>
+        <Button Content="Update text" HorizontalAlignment="Left" Margin="444,320,0,0" VerticalAlignment="Top" Width="69"/>
+        <Button Content="Copy" HorizontalAlignment="Left" Margin="610,320,0,0" VerticalAlignment="Top" Width="59"/>
+
+        <TextBox HorizontalAlignment="Left" Margin="371,360,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="318" Height="271"/>
+        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="710,67,25,72"/>
+        <Button Content="Clear Text" HorizontalAlignment="Left" Margin="703,600,0,0" VerticalAlignment="Top" Width="91" RenderTransformOrigin="0.794,0.652"/>
+        <Label Content="Copied texts" HorizontalAlignment="Left" Margin="718,36,0,0" VerticalAlignment="Top"/>
+        <Button Content="Above content to clipboard" HorizontalAlignment="Left" Margin="806,595,0,0" VerticalAlignment="Top" Width="161" Height="29"/>
     </Grid>
 </Window>
