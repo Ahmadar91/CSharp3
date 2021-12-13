@@ -4,11 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuizManager"
+        xmlns:viewModel="clr-namespace:QuizManager.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewModel:View}"
         mc:Ignorable="d"
         Title="MainWindow" Height="673" Width="992">
     <Grid Margin="0,0,0,4">
 
-        <GroupBox Header="GroupBox" Margin="31,34,654,393"/>
+        <GroupBox Header="New Course" Margin="31,34,654,393"/>
 
         <GroupBox Header="Courses" Margin="20,17,630,22">
             <Grid Height="549" Margin="10,0,-2,0">
@@ -22,28 +24,27 @@
                         </TransformGroup>
                     </Label.RenderTransform>
                 </Label>
-                <TextBox TextWrapping="Wrap" Text="" Height="20" Margin="86,22,42,507"/>
-                <TextBox TextWrapping="Wrap" Text="" Height="20" Margin="86,60,42,469"/>
-                <TextBox TextWrapping="Wrap" Text="" Height="20" Margin="86,96,42,433"/>
+                <TextBox x:Name="IdText" TextWrapping="Wrap" Text="" Height="20" Margin="86,22,42,507"/>
+                <TextBox x:Name="NameText" TextWrapping="Wrap" Text="" Height="20" Margin="86,60,42,469"/>
+                <TextBox x:Name="ModulesText" TextWrapping="Wrap" Text="" Height="20" Margin="86,96,42,433"/>
                 <Label Content="Name" HorizontalAlignment="Left" Margin="10,55,0,466" Width="53"/>
                 <Label Content="Moments" HorizontalAlignment="Left" Margin="8,94,0,425" Width="62"/>
                 <Label Content="warning" HorizontalAlignment="Left" Margin="114,126,0,396" Width="54" RenderTransformOrigin="0.474,1.404"/>
                 <Button x:Name="addCourseBtn" Content="Add Course" HorizontalAlignment="Left" Margin="72,163,0,0" VerticalAlignment="Top" Width="148"/>
-                <ListView d:ItemsSource="{d:SampleData ItemCount=5}" Margin="8,220,169,85">
+                <ListBox x:Name="ModuleList" ItemsSource="{Binding CourseManager.CoursesList }" Margin="159,219,18,86">
+                
+                </ListBox>
+
+                <ListView  x:Name="CoursesList" ItemsSource="{Binding CourseManager.CoursesList }" Margin="8,220,169,85">
                     <ListView.View>
-                        <GridView>
-                            <GridViewColumn/>
+                        <GridView >
+                            <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" />
+                            <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Name}" Width="100" />
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <ListView d:ItemsSource="{d:SampleData ItemCount=5}" Margin="159,219,18,86">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <Button x:Name="deleteCourseBtn" Content="Delete Course" HorizontalAlignment="Left" Margin="11,480,0,0" VerticalAlignment="Top" Width="139"/>
+
+                <Button x:Name="deleteCourseBtn" Content="Delete Course" HorizontalAlignment="Left" Margin="11,481,0,0" VerticalAlignment="Top" Width="139"/>
                 <CheckBox Content="Link Mode" HorizontalAlignment="Left" Margin="229,484,0,0" VerticalAlignment="Top"/>
                 <Button x:Name="linkItemToCat" Content="Link item top to a Cat or Cat-Sub category" HorizontalAlignment="Left" Margin="11,512,0,0" VerticalAlignment="Top" Width="288" Height="24"/>
 
